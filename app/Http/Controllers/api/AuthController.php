@@ -6,83 +6,99 @@ use App\Http\Controllers\Controller;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
 
     /**
-     * REGISTER
+     * 
+     * Register a User
+     * 
+     * @param RegisterRequest $request
+     * @return JsonResponse
      */
-    public function register(Request $request) {
-        $fields = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed',
-            'ssn' => 'required|string|min:14|max:14'
-        ]);
+    public function register(RegisterRequest $request): JsonResponse {
+
+        // Validate the data from the request
+        // App/Http/Request/RegisterRequest
+        $data = $request->validated(); 
         
-        $user = User::create([
-            'name' => $fields['name'],
-            'email' => $fields['email'],
-            'password' => bcrypt($fields['password']),
-            'ssn' => $fields['ssn']
-        ]);
+        $data['password'] = Hash::make($data['password']);
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $user = User::create($data);
 
-        $response = [
+
+        $token = $user->createToken(User::USER_TOKEN);
+
+        return $this->success([
+
             'user' => $user,
-            'token' => $token
-        ];
+            'token' => $token->plainTextToken,
 
-        return response($response, 201);
+        ], 'User has been register successfully.', 201);
 
     }
 
     /**
-     * LOGIN
+     * 
+     * Logins a User
+     * 
+     * @param LoginRequest $request
+     * @return JsonResponse
      */
-    public function login(Request $request) {
+    public function login(LoginRequest $request): JsonResponse {
 
-        $fields = $request->validate([
-            'email' => 'required|string',
-            'password' => 'required|string'
-        ]);
+        // Validate the data from the request
+        // App/Http/Request/LoignRequest
+        $data = $request->validated(); 
 
         // Check the valid email first
-        $user = User::where('email', $fields['email'])->first();
+        $user = User::where('email', $data['email'])->first();
 
         // Check the password
-        if (!$user || !Hash::check($fields['password'], $user->password)) {
+        if (!$user || !Hash::check($data['password'], $user->password)) {
 
-            return response([
-
-                'message' => 'Invalid Email or Password'
-
-            ], 401);
+            return $this->error('Invalid Email or Password', 401);
         }
 
-        $token = $user->createToken('myAppToken')->plainTextToken;
+        $token = $user->createToken(User::USER_TOKEN);
 
-        $response = [
+    
+        return $this->success([
+
             'user' => $user,
-            'token' => $token
-        ];
+            'token' => $token->plainTextToken,
 
-        return response($response, 201);
+        ], 'Login successfully', 201);
+    }
+
+
+    /**
+     * 
+     * Logins a User with token
+     * 
+     * @return JsonResponse
+     */
+    public function loginWithToken(): JsonResponse {
+
+        return $this->success(auth()->user(), 'Login successfully', 201);
     }
 
     /**
-     * LOGOUT
+     * 
+     * Logouts a User
+     * 
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function logout() {
+    public function logout(Request $request): JsonResponse {
 
-        auth()->user()->tokens()->delete();
+        $request->user()->currentAccessToken()->delete();
 
-        return [
-            'message' => 'You Logged out Successfully'
-        ];
+        return $this->success(null, 'Logout successfully');
     }
 }

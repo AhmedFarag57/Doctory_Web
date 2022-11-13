@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\ChatController;
+use App\Http\Controllers\api\ChatMessageController;
 use App\Http\Controllers\api\SessionController;
+use App\Http\Controllers\api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,10 +34,11 @@ Route::get('/test', function(){
 /**
  * Public API
  */
-Route::get('/sessions', [SessionController::class, 'index']);
-Route::get('/sessions/{id}', [SessionController::class, 'show']);
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index');
+Route::get('/sessions/{id}', [SessionController::class, 'show'])->name('sessions.show');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->name('loginWithToken');
 
 
 
@@ -43,8 +47,14 @@ Route::post('/login', [AuthController::class, 'login']);
  */
 Route::group(['middleware' => ['auth:sanctum']], function(){
         
-    Route::post('/sessions', [SessionController::class, 'store']);
-    Route::put('/sessions/{id}', [SessionController::class, 'update']);
-    Route::delete('/sessions/{id}', [SessionController::class, 'destroy']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/sessions', [SessionController::class, 'store'])->name('sessions.store');
+    Route::put('/sessions/{id}', [SessionController::class, 'update'])->name('sessions.update');
+    Route::delete('/sessions/{id}', [SessionController::class, 'destroy'])->name('sessions.destroy');
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Chat
+    Route::apiResource('chat', ChatController::class)->only(['index', 'store', 'show']);
+    Route::apiResource('chat_message', ChatMessageController::class)->only(['index', 'store']);
+    Route::apiResource('user', UserController::class)->only(['index']);
+
 });
