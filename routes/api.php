@@ -46,7 +46,7 @@ Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->nam
  * Private API
  */
 Route::group(['middleware' => ['auth:sanctum']], function(){
-        
+
     Route::post('/sessions', [SessionController::class, 'store'])->name('sessions.store');
     Route::put('/sessions/{id}', [SessionController::class, 'update'])->name('sessions.update');
     Route::delete('/sessions/{id}', [SessionController::class, 'destroy'])->name('sessions.destroy');
@@ -57,4 +57,11 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::apiResource('chat_message', ChatMessageController::class)->only(['index', 'store']);
     Route::apiResource('user', UserController::class)->only(['index']);
 
+    //by ahmed
+
+    Route::get('/Doctors', [DoctorController::class, 'index']);
+    Route::post('/Doctors', [DoctorController::class, 'store']);
+    Route::get('/Doctors', [DoctorController::class, 'Show']);
+    Route::put('/Doctors', [DoctorController::class, 'update']);
+    Route::get('/Doctors/search/{name}', [DoctorController::class, 'search']);
 });
