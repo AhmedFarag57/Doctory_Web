@@ -5,6 +5,7 @@ use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\api\ChatMessageController;
 use App\Http\Controllers\api\SessionController;
 use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\api\DoctorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,11 +25,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 /**
- * Test API
+ * Test Public API 
  */
-Route::get('/test', function(){
-    return 'Hello world!';
+Route::get('/public_test', function(){
+    return 'Hello world from public API';
 });
+/**
+ * Test Private API
+ */
+Route::get('/private_test', function(){
+    return 'Hello world from private API';
+})->middleware('auth:sanctum');
+
 
 
 /**
@@ -57,11 +65,12 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::apiResource('chat_message', ChatMessageController::class)->only(['index', 'store']);
     Route::apiResource('user', UserController::class)->only(['index']);
 
-    //by ahmed
+    // Doctor
 
-    Route::get('/Doctors', [DoctorController::class, 'index']);
-    Route::post('/Doctors', [DoctorController::class, 'store']);
-    Route::get('/Doctors', [DoctorController::class, 'Show']);
-    Route::put('/Doctors', [DoctorController::class, 'update']);
-    Route::get('/Doctors/search/{name}', [DoctorController::class, 'search']);
+    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index');
+    Route::post('/doctors', [DoctorController::class, 'store'])->name('doctors.store');
+    Route::get('/doctors/{id}', [DoctorController::class, 'Show'])->name('doctors.show');
+    Route::put('/doctors/{id}', [DoctorController::class, 'update'])->name('doctors.update');
+    Route::delete('/doctors/{id}', [DoctorController::class, 'destroy'])->name('doctors.destroy');
+    Route::get('/doctors/search/{name}', [DoctorController::class, 'search'])->name('doctors.search');
 });

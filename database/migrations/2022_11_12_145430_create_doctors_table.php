@@ -15,13 +15,11 @@ return new class extends Migration
     {
         Schema::create('doctors', function (Blueprint $table) {
             $table->id();
-            $table->integer('d_ID');
-            $table->integer('user_ID');
-            $table->string('Name');
-            $table->string('Clinic_Address');
-            $table->string('Certification');
-            $table->decimal('Session_prices',5 , 2);
-            $table->integer('Rating');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('clinic_address');
+            $table->string('certification');
+            $table->decimal('session_price', 5, 2);
+            $table->decimal('rating', 5, 2)->default(5);
             $table->timestamps();
         });
     }
