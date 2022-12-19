@@ -42,11 +42,11 @@ Route::get('/private_test', function(){
 /**
  * Public API
  */
-Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index');
-Route::get('/sessions/{id}', [SessionController::class, 'show'])->name('sessions.show');
-Route::post('/register', [AuthController::class, 'register'])->name('register');
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->name('loginWithToken');
+Route::get('/sessions', [SessionController::class, 'index'])->name('api.sessions.index');
+Route::get('/sessions/{id}', [SessionController::class, 'show'])->name('api.sessions.show');
+Route::post('/register', [AuthController::class, 'register'])->name('api.register');
+Route::post('/login', [AuthController::class, 'login'])->name('api.login');
+Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->name('api.loginWithToken');
 
 
 
@@ -54,11 +54,11 @@ Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->nam
  * Private API
  */
 Route::group(['middleware' => ['auth:sanctum']], function(){
-
-    Route::post('/sessions', [SessionController::class, 'store'])->name('sessions.store');
-    Route::put('/sessions/{id}', [SessionController::class, 'update'])->name('sessions.update');
-    Route::delete('/sessions/{id}', [SessionController::class, 'destroy'])->name('sessions.destroy');
-    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    
+    Route::post('/sessions', [SessionController::class, 'store'])->name('api.sessions.store');
+    Route::put('/sessions/{id}', [SessionController::class, 'update'])->name('api.sessions.update');
+    Route::delete('/sessions/{id}', [SessionController::class, 'destroy'])->name('api.sessions.destroy');
+    Route::get('/logout', [AuthController::class, 'logout'])->name('api.logout');
 
     // Chat
     Route::apiResource('chat', ChatController::class)->only(['index', 'store', 'show']);
@@ -66,11 +66,11 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::apiResource('user', UserController::class)->only(['index']);
 
     // Doctor
-
-    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index');
-    Route::post('/doctors', [DoctorController::class, 'store'])->name('doctors.store');
-    Route::get('/doctors/{id}', [DoctorController::class, 'Show'])->name('doctors.show');
-    Route::put('/doctors/{id}', [DoctorController::class, 'update'])->name('doctors.update');
-    Route::delete('/doctors/{id}', [DoctorController::class, 'destroy'])->name('doctors.destroy');
-    Route::get('/doctors/search/{name}', [DoctorController::class, 'search'])->name('doctors.search');
+    
+    Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
+    Route::post('/doctors', [DoctorController::class, 'store'])->name('api.doctors.store');
+    Route::get('/doctors/{id}', [DoctorController::class, 'Show'])->name('api.doctors.show');
+    Route::put('/doctors/{id}', [DoctorController::class, 'update'])->name('api.doctors.update');
+    Route::delete('/doctors/{id}', [DoctorController::class, 'destroy'])->name('api.doctors.destroy');
+    Route::get('/doctors/search/{name}', [DoctorController::class, 'search'])->name('api.doctors.search');
 });

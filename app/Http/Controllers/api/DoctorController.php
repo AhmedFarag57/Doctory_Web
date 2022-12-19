@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Doctor;
+use Illuminate\Http\JsonResponse;
 
 use function PHPUnit\Framework\isNull;
 
@@ -15,9 +16,11 @@ class DoctorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() : JsonResponse
     {
-        return Doctor::all();
+        $doctors = Doctor::all();
+
+        return $this->success($doctors);
     }
 
     /**
@@ -26,7 +29,7 @@ class DoctorController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request) : JsonResponse
     {
         $request->validate([
             'user_id' =>'required|numeric',
@@ -35,7 +38,9 @@ class DoctorController extends Controller
             'session_price' => 'required|numeric'
         ]);
 
-        return Doctor::create($request->all());
+        $doctor = Doctor::create($request->all());
+        
+        return $this->success($doctor, 'Doctor creatde successfully');
     }
 
     /**
@@ -44,9 +49,15 @@ class DoctorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id) : JsonResponse
     {
-        return Doctor::find($id);
+        $doctor = Doctor::find($id);
+
+        if($doctor){
+            return $this->success($doctor);
+        }
+        
+        return $this->error('Doctor with this ID does not exist');
     }
 
     /**
@@ -56,12 +67,12 @@ class DoctorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) : JsonResponse
     {
         $doctor = Doctor::find($id);
 
         if(isNull($doctor)){
-            $this->error('The doctor does not exist');
+            $this->error('Doctor with this ID does not exist');
         }
 
         $data = $request->validate([
@@ -85,9 +96,16 @@ class DoctorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id) : JsonResponse
     {
-        Doctor::destroy($id);
+        $doctor = Doctor::find($id);
+        if(isNull($doctor)){
+            $this->error('Doctor with this ID does not exist');
+        }
+
+        $doctor->destroy();
+
+        return $this->success(null, 'Doctor deleted successfully'); 
     }
 
     /**
@@ -96,8 +114,14 @@ class DoctorController extends Controller
      * @param  str  $Name
      * @return \Illuminate\Http\Response
      */
-    public function search($Name)
+    public function search($Name) : JsonResponse
     {
-        return Doctor::where('Name','like','%' .$Name. '%')->get();
+        $doctor = Doctor::where('Name','like','%' .$Name. '%')->get();
+        
+        if($doctor){
+            return $this->success($doctor);
+        }
+
+        return $this->error('Doctor with this ID does not exist');
     }
 }
