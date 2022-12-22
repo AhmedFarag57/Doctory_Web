@@ -15,9 +15,9 @@ class AuthController extends Controller
 {
 
     /**
-     * 
+     *
      * Register a User
-     * 
+     *
      * @param RegisterRequest $request
      * @return JsonResponse
      */
@@ -25,9 +25,10 @@ class AuthController extends Controller
 
         // Validate the data from the request
         // App/Http/Request/RegisterRequest
-        $data = $request->validated(); 
-        
+        $data = $request->validated();
+
         $data['password'] = Hash::make($data['password']);
+
 
         $user = User::create($data);
 
@@ -44,9 +45,9 @@ class AuthController extends Controller
     }
 
     /**
-     * 
+     *
      * Logins a User
-     * 
+     *
      * @param LoginRequest $request
      * @return JsonResponse
      */
@@ -54,7 +55,7 @@ class AuthController extends Controller
 
         // Validate the data from the request
         // App/Http/Request/LoignRequest
-        $data = $request->validated(); 
+        $data = $request->validated();
 
         // Check the valid email first
         $user = User::where('email', $data['email'])->first();
@@ -62,12 +63,12 @@ class AuthController extends Controller
         // Check the password
         if (!$user || !Hash::check($data['password'], $user->password)) {
 
-            return $this->error('Invalid Email or Password', 401);
+            return $this->error('Invalid Email or Password', 422);
         }
 
         $token = $user->createToken(User::USER_TOKEN);
 
-    
+
         return $this->success([
 
             'user' => $user,
@@ -78,9 +79,9 @@ class AuthController extends Controller
 
 
     /**
-     * 
+     *
      * Logins a User with token
-     * 
+     *
      * @return JsonResponse
      */
     public function loginWithToken(): JsonResponse {
@@ -89,9 +90,9 @@ class AuthController extends Controller
     }
 
     /**
-     * 
+     *
      * Logouts a User
-     * 
+     *
      * @param Request $request
      * @return JsonResponse
      */
