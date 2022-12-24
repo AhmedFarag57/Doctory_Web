@@ -1,10 +1,15 @@
 import {createRouter, createWebHistory} from "vue-router";
+
 import Dashboard from "../views/Dashboard.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
+import Patients from "../views/Patients.vue";
+import PatientView from "../views/PatientView.vue";
+import Doctors from "../views/Doctors.vue";
+import DoctorView from "../views/DoctorView.vue";
+
 import DefaultLayout from "../components/DefaultLayout.vue";
 import AuthLayout from "../components/AuthLayout.vue";
-import Users from "../views/Users.vue";
 import store from "../store/index.js";
 
 const routes = [
@@ -16,7 +21,15 @@ const routes = [
     meta: {requiresAuth: true},
     children: [
       {path: '/dashboard', name: 'Dashboard', component: Dashboard},
-      {path: '/users', name: 'Users', component: Users},
+
+      {path: '/patients', name: 'Patients', component: Patients},
+      {path: '/patients/create', name: 'PatientCreate', component: PatientView},
+      {path: '/patients/:id', name: 'PatientView', component: PatientView},
+
+      {path: '/doctors', name: 'Doctors', component: Doctors},
+      {path: '/doctors/create', name: 'DoctorCreate', component: DoctorView},
+      {path: '/doctors/:id', name: 'DoctorView', component: DoctorView},
+
 
     ],
   },
