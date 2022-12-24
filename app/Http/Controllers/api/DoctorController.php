@@ -34,12 +34,12 @@ class DoctorController extends Controller
         $request->validate([
             'user_id' =>'required|numeric',
             'clinic_address' =>'required|string|max:255',
-            'certification' =>'required|string|max:255',
+            'certifications' =>'required|string|max:255',
             'session_price' => 'required|numeric'
         ]);
 
         $doctor = Doctor::create($request->all());
-        
+
         return $this->success($doctor, 'Doctor creatde successfully');
     }
 
@@ -56,7 +56,7 @@ class DoctorController extends Controller
         if($doctor){
             return $this->success($doctor);
         }
-        
+
         return $this->error('Doctor with this ID does not exist');
     }
 
@@ -77,13 +77,13 @@ class DoctorController extends Controller
 
         $data = $request->validate([
             'clinic_address' => 'required|string|max:255',
-            'certification' => 'required|string|max:255',
+            'certifications' => 'required|string|max:255',
             'session_price' => 'required|numeric'
         ]);
 
         $doctor->update([
             'clinic_address' => $data['clinic_address'],
-            'certification' => $data['certification'],
+            'certifications' => $data['certifications'],
             'session_price' => $data['session_price']
         ]);
 
@@ -105,7 +105,7 @@ class DoctorController extends Controller
 
         $doctor->destroy();
 
-        return $this->success(null, 'Doctor deleted successfully'); 
+        return $this->success(null, 'Doctor deleted successfully');
     }
 
     /**
@@ -117,7 +117,7 @@ class DoctorController extends Controller
     public function search($Name) : JsonResponse
     {
         $doctor = Doctor::where('Name','like','%' .$Name. '%')->get();
-        
+
         if($doctor){
             return $this->success($doctor);
         }
