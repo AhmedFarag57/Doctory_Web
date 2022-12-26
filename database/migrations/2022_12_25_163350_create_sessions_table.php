@@ -15,10 +15,10 @@ class CreateSessionsTable extends Migration
     {
         Schema::create('sessions', function (Blueprint $table) {
             $table->id();
-            // $table->integer('doc_id');
-            // $table->foreign('doc_id')->references('id')->on('doctors')->onDelete('cascade');
-            // $table->integer('patient_id');
-            // $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
+            $table->integer('doc_id');
+            $table->foreign('doc_id')->references('id')->on('doctors')->onDelete('cascade');
+            $table->integer('patient_id');
+            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
             $table->enum('status', array('completed', 'canceled', 'pending'));
             $table->string('type');
             $table->time('time');

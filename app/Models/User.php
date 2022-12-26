@@ -21,7 +21,7 @@ class User extends Authenticatable
     // The guarded -> Primary Key
     protected $guarded = ['id'];
 
-    // The Token 
+    // The Token
     const USER_TOKEN = '';
 
     /**
@@ -34,6 +34,10 @@ class User extends Authenticatable
         'email',
         'password',
         'ssn',
+        'phone_number',
+        'gender',
+        'date_of_birth',
+        'isDoctor',
         'profile_pic',
         'blocked',
     ];
@@ -59,19 +63,27 @@ class User extends Authenticatable
 
 
     /**
-     * 
-     * Relation with Chat 
+     *
+     * Relation with Chat
      */
     public function chats() : HasMany {
         return $this->hasMany(Chat::class, 'created_by');
     }
 
     /**
-     * 
+     *
      * Relation with Doctor
      */
     public function doctor() : HasOne {
         return $this->hasOne(Doctor::class, 'user_id');
+    }
+
+    /**
+     *
+     * Relation with Patient
+     */
+    public function patient() : HasOne {
+        return $this->hasOne(Patient::class, 'user_id');
     }
 
     /**
