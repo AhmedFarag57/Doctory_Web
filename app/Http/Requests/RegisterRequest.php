@@ -31,7 +31,11 @@ class RegisterRequest extends FormRequest
                 'required',
                 Password::min(8)->mixedCase()->numbers()->symbols()
             ],
-            'ssn' => 'required|string|min:14|max:14'
+            'ssn' => 'required|string|min:14|max:14',
+            'gender' => 'required',
+            'phone_number' => 'required|min:11|max:11',
+            'date_of_birth' => 'required',
+            'isDoctor' => 'required',
         ];
     }
 }

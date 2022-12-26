@@ -3,10 +3,15 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Doctor;
 use Illuminate\Http\JsonResponse;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password;
 use function PHPUnit\Framework\isNull;
 
 class DoctorController extends Controller
@@ -18,7 +23,10 @@ class DoctorController extends Controller
      */
     public function index() : JsonResponse
     {
-        $doctors = Doctor::all();
+        $doctors = DB::table('doctors')
+            ->select('*')
+            ->join('users', 'doctors.user_id', '=', 'users.id')
+            ->get();
 
         return $this->success($doctors);
     }
@@ -31,16 +39,53 @@ class DoctorController extends Controller
      */
     public function store(Request $request) : JsonResponse
     {
-        $request->validate([
-            'user_id' =>'required|numeric',
-            'clinic_address' =>'required|string|max:255',
-            'certifications' =>'required|string|max:255',
+        $this->validate($request, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|string|max:255|unique:users',
+            'password' => [
+                'required',
+                Password::min(8)->mixedCase()->numbers()->symbols()
+            ],
+            'ssn' => 'required|string|min:14|max:14',
+            'phone_number' => 'string|max:255',
+            'date_of_birth' => 'required|date',
+            'gender' => 'required|string|max:6|min:4',
+            'profile_picture' => 'image:jpeg,png,jpg,gif,svg|max:2048',
+            'isDoctor' => 'required|numeric',
+            'clinic_address' =>'string|max:255',
             'session_price' => 'required|numeric'
         ]);
 
-        $doctor = Doctor::create($request->all());
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'ssn' => $request->ssn,
+            'phone_number' => $request->phone_number,
+            'date_of_birth' => $request->date_of_birth,
+            'gender' => $request->gender,
+            'isDoctor' => true,
+        ]);
 
-        return $this->success($doctor, 'Doctor creatde successfully');
+        if($request->hasFile('profile_picture')){
+            $profile = Str::slug($request->name) . '-' . $user->id . '.' . $request->profile_picture->getClientOriginalExtension();
+            $request->profile_picture->move(public_path('images/profile'), $profile);
+
+            $user->update([
+                'profile_picture' => $profile
+            ]);
+        }
+
+        $user->doctor()->create([
+           'clinic_address' => $request->clinic_address,
+            'session_price' => $request->session_price,
+        ]);
+
+        $user = Doctor::where('user_id', $user->id)->with('user')->get();
+
+        //$user->assignRole('Doctor');
+
+        return $this->success($user, 'Doctor created successfully');
     }
 
     /**
@@ -54,6 +99,7 @@ class DoctorController extends Controller
         $doctor = Doctor::find($id);
 
         if($doctor){
+            $doctor = User::where('id', $doctor->user_id)->with('doctor')->get();
             return $this->success($doctor);
         }
 
@@ -70,24 +116,47 @@ class DoctorController extends Controller
     public function update(Request $request, $id) : JsonResponse
     {
         $doctor = Doctor::find($id);
+        $user = User::findOrFail($doctor->user_id);
 
         if(isNull($doctor)){
             $this->error('Doctor with this ID does not exist');
         }
 
-        $data = $request->validate([
-            'clinic_address' => 'required|string|max:255',
-            'certifications' => 'required|string|max:255',
+        $this->validate($request, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|string|max:255|unique:users',
+            'ssn' => 'required|string|min:14|max:14',
+            'phone_number' => 'string|max:255',
+            'date_of_birth' => 'required|date',
+            'gender' => 'required|string|max:6|min:4',
+            'profile_picture' => 'image:jpeg,png,jpg,gif,svg|max:2048',
+            'clinic_address' =>'string|max:255',
             'session_price' => 'required|numeric'
         ]);
 
-        $doctor->update([
-            'clinic_address' => $data['clinic_address'],
-            'certifications' => $data['certifications'],
-            'session_price' => $data['session_price']
+        if($request->hasFile('profile_picture')){
+            $profile = Str::slug($request->name) . '-' . $user->id . '.' . $request->profile_picture->getClientOriginalExtension();
+            $request->profile_picture->move(public_path('images/profile'), $profile);
+        }
+        else {
+            $profile = $user->profile_picture;
+        }
+
+        $user->update([
+           'name' => $request->name,
+           'email' => $request->email,
+           'phone_number' => $request->phone_number,
+            'date_of_birth' => $request->date_of_birth,
+            'gender' => $request->gender,
+            'profile_picture' => $profile,
         ]);
 
-        return $this->success($doctor, 'Doctor updated successfully');
+        $user->doctor()->update([
+            'clinic_address' => $request->clinic_address,
+            'session_price' => $request->session_price
+        ]);
+
+        return $this->success($user, 'Doctor updated successfully');
     }
 
     /**
