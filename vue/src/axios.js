@@ -2,7 +2,7 @@ import axios from "axios";
 import store from "./store";
 
 const axiosClient = axios.create({
-  baseURL: 'http://localhost:8080/Projects/Graduation_Project/Doctory/public/api/',
+  baseURL: 'http://localhost:8080/Projects/Graduation_Project/Doctory/public/api',
 
 })
 

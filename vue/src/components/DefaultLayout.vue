@@ -113,7 +113,7 @@ import { computed } from "vue";
 
 const navigation = [
   { name: 'Dashboard', to: {name: 'Dashboard'}},
-  //{ name: 'Doctors', to: {name: 'Doctors'}},
+  { name: 'Doctors', to: {name: 'Doctors'}},
   { name: 'Patients', to: {name: 'Patients'}},
 ]
 const userNavigation = [

@@ -29,10 +29,16 @@ class Doctor extends Model
     }
 
     /**
-     *
      * Relation with Certification
      */
     public function certification() : HasMany {
         return $this->hasMany(Certification::class, 'doc_id');
+    }
+
+    /**
+     * Relation with Appointment
+     */
+    public function appointment() : HasMany{
+        return $this->hasMany(Appointment::class, 'doc_id');
     }
 }
