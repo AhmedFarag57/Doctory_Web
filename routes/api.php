@@ -6,6 +6,8 @@ use App\Http\Controllers\api\ChatMessageController;
 use App\Http\Controllers\api\SessionController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\DoctorController;
+use App\Http\Controllers\api\AppointmentController;
+use App\Http\Controllers\api\PatientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +27,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 /**
- * Test Public API 
+ * Test Public API
  */
 Route::get('/public_test', function(){
     return 'Hello world from public API';
@@ -54,10 +56,24 @@ Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->nam
  * Private API
  */
 Route::group(['middleware' => ['auth:sanctum']], function(){
-    
-    Route::post('/sessions', [SessionController::class, 'store'])->name('api.sessions.store');
-    Route::put('/sessions/{id}', [SessionController::class, 'update'])->name('api.sessions.update');
-    Route::delete('/sessions/{id}', [SessionController::class, 'destroy'])->name('api.sessions.destroy');
+
+    /**
+     *  GET     : /appointments
+     *  POST    : /appointments
+     *  PUT     : /appointments/{id}
+     *  DELETE  : /appointments/{id}
+     */
+    Route::resource('/appointments', AppointmentController::class);
+    Route::get('/patients/appointments/{id}', [AppointmentController::class, 'patientAppointment']);
+
+    /**
+     *  GET     : /patients
+     *  POST    : /patients
+     *  PUT     : /patients/{id}
+     *  DELETE  : /patients/{id}
+     */
+    Route::resource('/patients', PatientController::class);
+
     Route::get('/logout', [AuthController::class, 'logout'])->name('api.logout');
 
     // Chat
@@ -66,7 +82,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::apiResource('user', UserController::class)->only(['index']);
 
     // Doctor
-    
+
     Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
     Route::post('/doctors', [DoctorController::class, 'store'])->name('api.doctors.store');
     Route::get('/doctors/{id}', [DoctorController::class, 'Show'])->name('api.doctors.show');

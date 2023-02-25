@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('clinic_address')->nullable();
             //$table->string('certifications');
-            $table->decimal('session_price', 5, 2);
+            $table->decimal('session_price', 6, 2);
             $table->decimal('rating', 5, 2)->default(5);
             $table->boolean('accepted')->default(0);
             $table->timestamps();

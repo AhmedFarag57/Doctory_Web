@@ -42,8 +42,9 @@ class PatientController extends Controller
             'phone_number' => 'string|max:255',
             'date_of_birth' => 'required|date',
             'gender' => 'required|string|max:6|min:4',
-            'profile_picture' => 'image:jpeg,png,jpg,gif,svg|max:2048',
-            'isDoctor' => 'required|numeric',
+            'ssn' => 'required|string|min:14|max:14',
+            'profile_picture' => 'nullable|string',
+            'isDoctor' => 'required|boolean',
             'fake_name' => 'string|max:255',
         ]);
 
@@ -55,6 +56,7 @@ class PatientController extends Controller
             'date_of_birth' => $request->date_of_birth,
             'gender' => $request->gender,
             'isDoctor' => false,
+            'ssn' => $request->ssn,
         ]);
 
         if($request->hasFile('profile_picture')){

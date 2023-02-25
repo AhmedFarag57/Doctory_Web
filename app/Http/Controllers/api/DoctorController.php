@@ -50,8 +50,8 @@ class DoctorController extends Controller
             'phone_number' => 'string|max:255',
             'date_of_birth' => 'required|date',
             'gender' => 'required|string|max:6|min:4',
-            'profile_picture' => 'image:jpeg,png,jpg,gif,svg|max:2048',
-            'isDoctor' => 'required|numeric',
+            'profile_picture' => 'nullable|string',
+            'isDoctor' => 'required|boolean',
             'clinic_address' =>'string|max:255',
             'session_price' => 'required|numeric'
         ]);
