@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Models\Session;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 
 class SessionController extends Controller
 {
@@ -13,10 +14,11 @@ class SessionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() : JsonResponse
     {
         $sessions = Session::all();
-        return $sessions;
+
+        return $this->success($sessions);
     }
 
     /**
@@ -25,7 +27,7 @@ class SessionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request) : JsonResponse
     {
         $request->validate([
             'status' => 'required',
@@ -35,7 +37,8 @@ class SessionController extends Controller
         ]);
 
         $session = Session::create($request->all());
-        return $session;
+
+        return $this->success($session, 'Session created successfully');
     }
 
     /**
@@ -44,13 +47,14 @@ class SessionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id) : JsonResponse
     {
         $session = Session::find($id);
+        
         if(!$session)
             return [];
         
-        return $session;
+        return $this->success($session);
     }
 
     /**
@@ -60,9 +64,10 @@ class SessionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) : JsonResponse
     {
         $session = Session::find($id);
+
         if($session){
             $request->validate([
                 'status' => 'required',
@@ -71,9 +76,10 @@ class SessionController extends Controller
                 'report' => 'required',
             ]);
             $session->update($request->all());
-            return $session;
+            return $this->success($session, 'Session Updated successfully');
         }
-        return $session;
+
+        return $this->error('The session with this ID not found');
     }
 
     /**
@@ -82,9 +88,12 @@ class SessionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id) : JsonResponse
     {
         $session = Session::find($id);
-        return $session->delete();
+        if($session)
+            return $this->success(null, 'Session deleted successfully');
+        
+        return $this->error('The session with this ID not found');
     }
 }

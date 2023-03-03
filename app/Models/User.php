@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Notifications\MessageSent;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -11,6 +14,15 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    // Table name
+    protected $table = 'users';
+
+    // The guarded -> Primary Key
+    protected $guarded = ['id'];
+
+    // The Token
+    const USER_TOKEN = '';
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +34,10 @@ class User extends Authenticatable
         'email',
         'password',
         'ssn',
+        'phone_number',
+        'gender',
+        'date_of_birth',
+        'isDoctor',
         'profile_pic',
         'blocked',
     ];
@@ -44,4 +60,45 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    /**
+     *
+     * Relation with Chat
+     */
+    public function chats() : HasMany {
+        return $this->hasMany(Chat::class, 'created_by');
+    }
+
+    /**
+     *
+     * Relation with Doctor
+     */
+    public function doctor() : HasOne {
+        return $this->hasOne(Doctor::class, 'user_id');
+    }
+
+    /**
+     *
+     * Relation with Patient
+     */
+    public function patient() : HasOne {
+        return $this->hasOne(Patient::class, 'user_id');
+    }
+
+    /**
+     * Onesignal
+     */
+    public function routeNotificationForOneSignal() : array {
+        return ['tags' => ['key' => 'userId', 'relation' => '=', 'value' => (string)($this->id)]];
+    }
+    /**
+     * Onesignal
+     */
+    public function sendNewMessageNotification(array $data) : void {
+        return;
+        // $this->notify(new MessageSent($data));
+    }
+
+
 }
