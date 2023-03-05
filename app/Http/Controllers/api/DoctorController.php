@@ -42,18 +42,15 @@ class DoctorController extends Controller
         $this->validate($request, [
             'name' => 'required|string|max:255',
             'email' => 'required|email|string|max:255|unique:users',
-            'password' => [
-                'required',
-                Password::min(8)->mixedCase()->numbers()->symbols()
-            ],
+            'password' => 'required|min:8|max:255',
             'ssn' => 'required|string|min:14|max:14',
-            'phone_number' => 'string|max:255',
-            'date_of_birth' => 'required|date',
-            'gender' => 'required|string|max:6|min:4',
-            'profile_picture' => 'nullable|string',
+            //'phone_number' => 'string|max:255',
+            //'date_of_birth' => 'required|date',
+            //'gender' => 'required|string|max:6|min:4',
+            //'profile_picture' => 'nullable|string',
             'isDoctor' => 'required|boolean',
-            'clinic_address' =>'string|max:255',
-            'session_price' => 'required|numeric'
+            //'clinic_address' =>'string|max:255',
+            //'session_price' => 'required|numeric'
         ]);
 
         $user = User::create([
@@ -61,12 +58,13 @@ class DoctorController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'ssn' => $request->ssn,
-            'phone_number' => $request->phone_number,
-            'date_of_birth' => $request->date_of_birth,
-            'gender' => $request->gender,
-            'isDoctor' => true,
+            //'phone_number' => $request->phone_number,
+            //'date_of_birth' => $request->date_of_birth,
+            //'gender' => $request->gender,
+            'isDoctor' => $request->isDoctor,
         ]);
 
+        /*
         if($request->hasFile('profile_picture')){
             $profile = Str::slug($request->name) . '-' . $user->id . '.' . $request->profile_picture->getClientOriginalExtension();
             $request->profile_picture->move(public_path('images/profile'), $profile);
@@ -75,17 +73,16 @@ class DoctorController extends Controller
                 'profile_picture' => $profile
             ]);
         }
+        */
 
-        $user->doctor()->create([
+        $user->doctor()->create(/*[
            'clinic_address' => $request->clinic_address,
             'session_price' => $request->session_price,
-        ]);
-
-        $user = Doctor::where('user_id', $user->id)->with('user')->get();
+        ]*/);
 
         //$user->assignRole('Doctor');
 
-        return $this->success($user, 'Doctor created successfully');
+        return $this->success(null, 'Doctor created successfully');
     }
 
     /**
@@ -192,5 +189,33 @@ class DoctorController extends Controller
         }
 
         return $this->error('Doctor with this ID does not exist');
+    }
+
+    /**
+     * Count the number of appointments for a doctor
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function appointmentsCount($id) : JsonResponse  {
+        $tmp = DB::table('users')
+            ->select('*')
+            ->join('doctors', 'users.id', '=', 'doctors.user_id')
+            ->where('users.id', '=', $id)
+            ->first();
+
+
+        $count = DB::table('appointments')
+            ->select('doc_id')
+            ->where('doc_id', '=', $tmp->id)
+            ->count('doc_id');
+
+
+        $data = [
+            'count' => $count,
+        ];
+
+        return $this->success($data);
+
     }
 }
