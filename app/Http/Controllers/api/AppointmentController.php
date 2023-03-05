@@ -108,6 +108,10 @@ class AppointmentController extends Controller
         return $this->success(null, 'Appointment deleted successfully');
     }
 
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
     public function patientAppointment($id) : JsonResponse{
         $appointment = DB::table('appointments')
             ->select([
@@ -121,5 +125,22 @@ class AppointmentController extends Controller
             ->get();
 
         return $this->success($appointment, 'as');
+    }
+
+
+    public function doctorAppointments($id){
+        $appointment = DB::table('appointments')
+            ->select([
+                'appointments.status',
+                'appointments.date',
+                'appointments.time'
+            ])
+            ->join('doctors', 'doctors.id', '=', 'doc_id')
+            ->join('users', 'users.id', '=', 'doctors.user_id')
+            ->where('doc_id', '=', $id)
+            ->get();
+
+
+        return $this->success($appointment);
     }
 }
