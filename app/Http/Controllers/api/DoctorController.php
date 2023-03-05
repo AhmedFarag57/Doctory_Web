@@ -47,6 +47,7 @@ class DoctorController extends Controller
                 Password::min(8)->mixedCase()->numbers()->symbols()
             ],
             'ssn' => 'required|string|min:14|max:14',
+            
             'phone_number' => 'string|max:255',
             'date_of_birth' => 'required|date',
             'gender' => 'required|string|max:6|min:4',
@@ -54,17 +55,21 @@ class DoctorController extends Controller
             'isDoctor' => 'required|boolean',
             'clinic_address' =>'string|max:255',
             'session_price' => 'required|numeric'
+            
         ]);
 
         $user = User::create([
+
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'ssn' => $request->ssn,
+            
             'phone_number' => $request->phone_number,
             'date_of_birth' => $request->date_of_birth,
             'gender' => $request->gender,
             'isDoctor' => true,
+            
         ]);
 
         if($request->hasFile('profile_picture')){
@@ -80,6 +85,7 @@ class DoctorController extends Controller
            'clinic_address' => $request->clinic_address,
             'session_price' => $request->session_price,
         ]);
+        
 
         $user = Doctor::where('user_id', $user->id)->with('user')->get();
 
@@ -126,14 +132,16 @@ class DoctorController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|string|max:255|unique:users',
             'ssn' => 'required|string|min:14|max:14',
+            /*
             'phone_number' => 'string|max:255',
             'date_of_birth' => 'required|date',
             'gender' => 'required|string|max:6|min:4',
             'profile_picture' => 'image:jpeg,png,jpg,gif,svg|max:2048',
             'clinic_address' =>'string|max:255',
             'session_price' => 'required|numeric'
+            */
         ]);
-
+/*
         if($request->hasFile('profile_picture')){
             $profile = Str::slug($request->name) . '-' . $user->id . '.' . $request->profile_picture->getClientOriginalExtension();
             $request->profile_picture->move(public_path('images/profile'), $profile);
@@ -141,20 +149,23 @@ class DoctorController extends Controller
         else {
             $profile = $user->profile_picture;
         }
-
+*/
         $user->update([
            'name' => $request->name,
            'email' => $request->email,
+           /*
            'phone_number' => $request->phone_number,
             'date_of_birth' => $request->date_of_birth,
             'gender' => $request->gender,
             'profile_picture' => $profile,
+            */
         ]);
-
+/*
         $user->doctor()->update([
             'clinic_address' => $request->clinic_address,
             'session_price' => $request->session_price
         ]);
+        */
 
         return $this->success($user, 'Doctor updated successfully');
     }
