@@ -60,6 +60,7 @@ Route::post('/register', [AuthController::class, 'register'])->name('api.registe
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->name('api.loginWithToken');
 
+Route::post('/doctors', [DoctorController::class, 'store'])->name('api.doctors.store');
 
 
 /**
@@ -94,10 +95,9 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     // Doctor
 /*
     Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
-    Route::post('/doctors', [DoctorController::class, 'store'])->name('api.doctors.store');
+
     Route::get('/doctors/{id}', [DoctorController::class, 'Show'])->name('api.doctors.show');
     Route::put('/doctors/{id}', [DoctorController::class, 'update'])->name('api.doctors.update');
     Route::delete('/doctors/{id}', [DoctorController::class, 'destroy'])->name('api.doctors.destroy');
     Route::get('/doctors/search/{name}', [DoctorController::class, 'search'])->name('api.doctors.search');
-    */
 });

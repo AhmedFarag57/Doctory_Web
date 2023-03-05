@@ -41,7 +41,6 @@ class AuthController extends Controller
             'token' => $token->plainTextToken,
 
         ], 'User has been register successfully.', 201);
-
     }
 
     /**
@@ -76,7 +75,7 @@ class AuthController extends Controller
 
         ], 'Login successfully', 201);
     }
-
+    
 
     /**
      *
