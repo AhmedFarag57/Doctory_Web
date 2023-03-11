@@ -26,6 +26,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
+Route::resource('/patients', PatientController::class);
+
+
 /**
  * Test Public API
  */
@@ -65,7 +69,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
      *  DELETE  : /appointments/{id}
      */
     Route::resource('/appointments', AppointmentController::class);
-    Route::get('/patients/appointments/{id}', [AppointmentController::class, 'patientAppointment']);
+    Route::get('/patients/{id}/appointments', [AppointmentController::class, 'patientAppointment']);
 
     /**
      *  GET     : /patients
@@ -73,7 +77,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
      *  PUT     : /patients/{id}
      *  DELETE  : /patients/{id}
      */
-    Route::resource('/patients', PatientController::class);
+    //Route::resource('/patients', PatientController::class);
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('api.logout');
 
@@ -90,6 +94,9 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::put('/doctors/{id}', [DoctorController::class, 'update'])->name('api.doctors.update');
     Route::delete('/doctors/{id}', [DoctorController::class, 'destroy'])->name('api.doctors.destroy');
     Route::get('/doctors/search/{name}', [DoctorController::class, 'search'])->name('api.doctors.search');
+
     Route::get('/doctors/{id}/appointments/count', [DoctorController::class, 'appointmentsCount']);
     Route::get('/doctors/{id}/appointments', [AppointmentController::class, 'doctorAppointments']);
+    Route::get('/doctors/{id}/appointments/request', [AppointmentController::class, 'appointmentsRequest']);
+
 });

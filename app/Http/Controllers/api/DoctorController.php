@@ -140,9 +140,9 @@ class DoctorController extends Controller
         }
 
         $user->update([
-           'name' => $request->name,
-           'email' => $request->email,
-           'phone_number' => $request->phone_number,
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone_number' => $request->phone_number,
             'date_of_birth' => $request->date_of_birth,
             'gender' => $request->gender,
             'profile_picture' => $profile,
