@@ -34,12 +34,9 @@ class User extends Authenticatable
         'email',
         'password',
         'ssn',
-        'phone_number',
-        'gender',
-        'date_of_birth',
         'isDoctor',
-        'profile_pic',
         'blocked',
+        */
     ];
 
     /**

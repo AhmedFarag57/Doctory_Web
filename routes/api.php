@@ -25,6 +25,16 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::resource('/patients', PatientController::class);
+
+// Doctor
+
+Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
+Route::post('/doctors', [DoctorController::class, 'store'])->name('api.doctors.store');
+Route::get('/doctors/{id}', [DoctorController::class, 'Show'])->name('api.doctors.show');
+Route::put('/doctors/{id}', [DoctorController::class, 'update'])->name('api.doctors.update');
+Route::delete('/doctors/{id}', [DoctorController::class, 'destroy'])->name('api.doctors.destroy');
+Route::get('/doctors/search/{name}', [DoctorController::class, 'search'])->name('api.doctors.search');
 
 /**
  * Test Public API
@@ -50,6 +60,7 @@ Route::post('/register', [AuthController::class, 'register'])->name('api.registe
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->name('api.loginWithToken');
 
+Route::post('/doctors', [DoctorController::class, 'store'])->name('api.doctors.store');
 
 
 /**
@@ -72,7 +83,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
      *  PUT     : /patients/{id}
      *  DELETE  : /patients/{id}
      */
-    Route::resource('/patients', PatientController::class);
+    //Route::resource('/patients', PatientController::class);
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('api.logout');
 
@@ -82,9 +93,9 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::apiResource('user', UserController::class)->only(['index']);
 
     // Doctor
-
+/*
     Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
-    Route::post('/doctors', [DoctorController::class, 'store'])->name('api.doctors.store');
+
     Route::get('/doctors/{id}', [DoctorController::class, 'Show'])->name('api.doctors.show');
     Route::put('/doctors/{id}', [DoctorController::class, 'update'])->name('api.doctors.update');
     Route::delete('/doctors/{id}', [DoctorController::class, 'destroy'])->name('api.doctors.destroy');

@@ -26,7 +26,9 @@ class CreateUsersTable extends Migration
             $table->string('profile_pic')->default('avatar.png');
             $table->boolean('isDoctor');
             $table->boolean('blockde')->default(0);
+            */
             $table->rememberToken();
+            
             $table->timestamps();
         });
     }
@@ -38,6 +40,10 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
+        
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropForeign('user_id');
+            });
         Schema::dropIfExists('users');
     }
 }

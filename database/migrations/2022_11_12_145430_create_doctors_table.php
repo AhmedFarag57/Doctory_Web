@@ -20,7 +20,7 @@ return new class extends Migration
             //$table->string('certifications');
             $table->decimal('session_price', 6, 2);
             $table->decimal('rating', 5, 2)->default(5);
-            $table->boolean('accepted')->default(0);
+           $table->boolean('accepted')->default(0);
             $table->timestamps();
         });
     }
