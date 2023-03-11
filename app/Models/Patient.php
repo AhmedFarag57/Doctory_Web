@@ -13,8 +13,8 @@ class Patient extends Model
 
     protected $fillable = [
         'user_id',
-        'fake_name',
-        'wallet'
+       // 'fake_name',
+       // 'wallet'
     ];
 
     /**

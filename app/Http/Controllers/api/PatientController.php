@@ -39,27 +39,28 @@ class PatientController extends Controller
                 'required',
                 Password::min(8)->mixedCase()->numbers()->symbols()
             ],
-            'phone_number' => 'string|max:255',
-            'date_of_birth' => 'required|date',
-            'gender' => 'required|string|max:6|min:4',
+            //'phone_number' => 'string|max:255',
+            //'date_of_birth' => 'required|date',
+            //'gender' => 'required|string|max:6|min:4',
             'ssn' => 'required|string|min:14|max:14',
-            'profile_picture' => 'nullable|string',
-            'isDoctor' => 'required|boolean',
-            'fake_name' => 'string|max:255',
+            //'profile_picture' => 'nullable|string',
+            //'isDoctor' => 'required|boolean',
+            //'fake_name' => 'string|max:255',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'phone_number' => $request->phone_number,
-            'date_of_birth' => $request->date_of_birth,
-            'gender' => $request->gender,
-            'isDoctor' => false,
+            //'phone_number' => $request->phone_number,
+            //'date_of_birth' => $request->date_of_birth,
+            //'gender' => $request->gender,
+            //'isDoctor' => false,
             'ssn' => $request->ssn,
         ]);
-
+/*
         if($request->hasFile('profile_picture')){
+            
             $profile = Str::slug($request->name) . '-' . $user->id . '.' . $request->profile_picture->getClientOriginalExtension();
             $request->profile_picture->move(public_path('images/profile'), $profile);
 
@@ -67,16 +68,19 @@ class PatientController extends Controller
                 'profile_picture' => $profile
             ]);
         }
+        
 
         $user->patient()->create([
             'fake_name' => $request->fake_name
         ]);
 
         //$user->assignRole('Patient');
-
+*/
         return $this->success($user, 'Patient created successfully');
+        
     }
 
+    
     /**
      * Display the specified resource.
      *
