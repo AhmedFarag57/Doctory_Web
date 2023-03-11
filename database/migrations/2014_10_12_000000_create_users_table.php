@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
             //$table->enum('gender',['male', 'female']);
             //$table->date('date_of_birth')->nullable();
             //$table->string('profile_pic')->default('avatar.png');
-            $table->boolean('isDoctor');
+            $table->boolean('isDoctor')->default(0);
             $table->boolean('blockde')->default(0);
             $table->rememberToken();
             $table->timestamps();
