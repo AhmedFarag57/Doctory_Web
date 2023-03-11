@@ -17,7 +17,7 @@ class CreatePatientsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
            // $table->string('fake_name')->nullable();
-           // $table->decimal('wallet',9,3)->default(0);
+            $table->decimal('wallet',9,3)->default(0);
             $table->timestamps();
         });
     }

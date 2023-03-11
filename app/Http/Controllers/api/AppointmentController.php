@@ -14,7 +14,7 @@ class AppointmentController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function index() : JsonResponse
     {
@@ -26,8 +26,8 @@ class AppointmentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return JsonResponse
      */
     public function store(Request $request) : JsonResponse
     {
@@ -49,7 +49,7 @@ class AppointmentController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function show($id) : JsonResponse
     {
@@ -65,9 +65,9 @@ class AppointmentController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function update(Request $request, $id) : JsonResponse
     {
@@ -94,7 +94,7 @@ class AppointmentController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function destroy($id) : JsonResponse
     {
@@ -112,7 +112,8 @@ class AppointmentController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function patientAppointment($id) : JsonResponse{
+    public function patientAppointment($id) : JsonResponse
+    {
         $appointment = DB::table('appointments')
             ->select([
                 'users.name',
@@ -122,15 +123,21 @@ class AppointmentController extends Controller
             ])
             ->join('doctors', 'doctors.id', '=', 'doc_id')
             ->join('users', 'users.id', '=', 'doctors.user_id')
+            ->where('patient_id', '=', $id)
             ->get();
 
-        return $this->success($appointment, 'as');
+        return $this->success($appointment);
     }
 
-
-    public function doctorAppointments($id){
-        $appointment = DB::table('appointments')
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function doctorAppointments($id) : JsonResponse
+    {
+        $appointments = DB::table('appointments')
             ->select([
+                'appointments.id',
                 'appointments.status',
                 'appointments.date',
                 'appointments.time'
@@ -141,6 +148,28 @@ class AppointmentController extends Controller
             ->get();
 
 
-        return $this->success($appointment);
+        return $this->success($appointments);
+    }
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function appointmentsRequest($id) : JsonResponse
+    {
+        $appointments = DB::table('appointments')
+            ->select([
+                'appointments.id',
+                'appointments.status',
+                'appointments.date',
+                'appointments.time'
+            ])
+            ->join('doctors', 'doctors.id', '=', 'doc_id')
+            ->join('users', 'users.id', '=', 'doctors.user_id')
+            ->where('doc_id', '=', $id)
+            ->where('status', 'pending')
+            ->get();
+
+        return $this->success($appointments);
     }
 }
