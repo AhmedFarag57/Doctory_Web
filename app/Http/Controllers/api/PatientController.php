@@ -44,7 +44,7 @@ class PatientController extends Controller
             //'gender' => 'required|string|max:6|min:4',
             'ssn' => 'required|string|min:14|max:14',
             //'profile_picture' => 'nullable|string',
-            //'isDoctor' => 'required|boolean',
+            'isDoctor' => 'required|boolean',
             //'fake_name' => 'string|max:255',
         ]);
 
@@ -58,9 +58,9 @@ class PatientController extends Controller
             //'isDoctor' => false,
             'ssn' => $request->ssn,
         ]);
-/*
+        /*
         if($request->hasFile('profile_picture')){
-            
+
             $profile = Str::slug($request->name) . '-' . $user->id . '.' . $request->profile_picture->getClientOriginalExtension();
             $request->profile_picture->move(public_path('images/profile'), $profile);
 
@@ -68,19 +68,17 @@ class PatientController extends Controller
                 'profile_picture' => $profile
             ]);
         }
-        
+        */
 
-        $user->patient()->create([
-            'fake_name' => $request->fake_name
-        ]);
+        $user->patient()->create();
 
         //$user->assignRole('Patient');
-*/
+
         return $this->success($user, 'Patient created successfully');
-        
+
     }
 
-    
+
     /**
      * Display the specified resource.
      *
