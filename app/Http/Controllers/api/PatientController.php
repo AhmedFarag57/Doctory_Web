@@ -44,7 +44,7 @@ class PatientController extends Controller
             //'gender' => 'required|string|max:6|min:4',
             'ssn' => 'required|string|min:14|max:14',
             //'profile_picture' => 'nullable|string',
-            //'isDoctor' => 'required|boolean',
+            'isDoctor' => 'required|boolean',
             //'fake_name' => 'string|max:255',
         ]);
 
