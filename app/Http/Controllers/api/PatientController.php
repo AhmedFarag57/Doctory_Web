@@ -35,10 +35,7 @@ class PatientController extends Controller
         $this->validate($request, [
             'name' => 'required|string|max:255',
             'email' => 'required|email|string|max:255|unique:users',
-            'password' => [
-                'required',
-                Password::min(8)->mixedCase()->numbers()->symbols()
-            ],
+            'password' => 'required|min:8|max:255',
             //'phone_number' => 'string|max:255',
             //'date_of_birth' => 'required|date',
             //'gender' => 'required|string|max:6|min:4',
@@ -72,9 +69,9 @@ class PatientController extends Controller
 
         $user->patient()->create();
 
-        //$user->assignRole('Patient');
+        $user->assignRole('Patient');
 
-        return $this->success($user, 'Patient created successfully');
+        return $this->success(null, 'Patient created successfully');
 
     }
 
