@@ -17,7 +17,7 @@ class CreateAppointmentsTable extends Migration
             $table->id();
             $table->foreignId('doc_id')->constrained('doctors')->cascadeOnDelete();
             $table->foreignId('patient_id')->constrained('patients')->cascadeOnDelete();
-            $table->enum('status', array('completed', 'canceled', 'pending'))->default('pending');
+            $table->enum('status', array('accepted', 'completed', 'canceled', 'pending'))->default('pending');
             $table->string('session_price');
             $table->time('time');
             $table->date('date');
