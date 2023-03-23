@@ -4,6 +4,8 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 
+use App\Models\Doctor;
+use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
@@ -41,7 +43,6 @@ class AuthController extends Controller
             'token' => $token->plainTextToken,
 
         ], 'User has been register successfully.', 201);
-
     }
 
     /**
@@ -62,9 +63,18 @@ class AuthController extends Controller
 
         // Check the password
         if (!$user || !Hash::check($data['password'], $user->password)) {
-
             return $this->error('Invalid Email or Password', 422);
         }
+
+        $model = null;
+
+        if($user->hasRole('Doctor')){
+            $model = Doctor::where('user_id', $user->id)->first();
+        }
+        else if($user->hasRole('Patient')){
+            $model = Patient::where('user_id', $user->id)->first();
+        }
+
 
         $token = $user->createToken(User::USER_TOKEN);
 
@@ -72,6 +82,7 @@ class AuthController extends Controller
         return $this->success([
 
             'user' => $user,
+            'model' => $model,
             'token' => $token->plainTextToken,
 
         ], 'Login successfully', 201);
