@@ -86,6 +86,8 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::apiResource('chat_message', ChatMessageController::class)->only(['index', 'store']);
     Route::apiResource('user', UserController::class)->only(['index']);
 
+    Route::get('/appointments/{id}/chat', [ChatMessageController::class, 'getMessages']);
+
     // Doctor
 
     Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
@@ -98,5 +100,8 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::get('/doctors/{id}/appointments/count', [DoctorController::class, 'appointmentsCount']);
     Route::get('/doctors/{id}/appointments', [AppointmentController::class, 'doctorAppointments']);
     Route::get('/doctors/{id}/appointments/request', [AppointmentController::class, 'appointmentsRequest']);
+    Route::get('/doctors/{id}/appointments/today', [AppointmentController::class, 'todayAppointments']);
+    Route::post('/doctors/appointments/request', [AppointmentController::class, 'appointmentsAction']);
+    Route::get('/test/{id}', [AppointmentController::class, 'labtest']);
 
 });
