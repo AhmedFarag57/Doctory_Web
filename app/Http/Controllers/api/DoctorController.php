@@ -80,7 +80,7 @@ class DoctorController extends Controller
             'session_price' => $request->session_price,
         ]*/);
 
-        //$user->assignRole('Doctor');
+        $user->assignRole('Doctor');
 
         return $this->success(null, 'Doctor created successfully');
     }
@@ -198,21 +198,14 @@ class DoctorController extends Controller
      * @return JsonResponse
      */
     public function appointmentsCount($id) : JsonResponse  {
-        $tmp = DB::table('users')
-            ->select('*')
-            ->join('doctors', 'users.id', '=', 'doctors.user_id')
-            ->where('users.id', '=', $id)
-            ->first();
-
 
         $count = DB::table('appointments')
             ->select('doc_id')
-            ->where('doc_id', '=', $tmp->id)
+            ->where('doc_id', $id)
             ->count('doc_id');
 
-
         $data = [
-            'count' => $count,
+            'count' => $count
         ];
 
         return $this->success($data);
