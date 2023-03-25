@@ -35,6 +35,8 @@ class User extends Authenticatable
         'password',
         'ssn',
         'isDoctor',
+        'blocked',
+
         //'blocked',
     ];
 

@@ -25,7 +25,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
 Route::resource('/patients', PatientController::class);
+
 
 /**
  * Test Public API
@@ -54,6 +57,8 @@ Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->nam
 Route::post('/doctors', [DoctorController::class, 'store'])->name('api.doctors.store');
 
 
+
+
 /**
  * Private API
  */
@@ -66,7 +71,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
      *  DELETE  : /appointments/{id}
      */
     Route::resource('/appointments', AppointmentController::class);
-    Route::get('/patients/appointments/{id}', [AppointmentController::class, 'patientAppointment']);
+    Route::get('/patients/{id}/appointments', [AppointmentController::class, 'patientAppointment']);
 
     /**
      *  GET     : /patients
@@ -84,6 +89,8 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::apiResource('user', UserController::class)->only(['index']);
 
     // Doctor
+    Route::get('/doctors/{id}/times', [DoctorController::class, 'doctortime']);
+    Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
 
     Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
     Route::get('/doctors/{id}', [DoctorController::class, 'Show'])->name('api.doctors.show');
@@ -91,5 +98,8 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::delete('/doctors/{id}', [DoctorController::class, 'destroy'])->name('api.doctors.destroy');
     Route::get('/doctors/search/{name}', [DoctorController::class, 'search'])->name('api.doctors.search');
 
-    
+    Route::get('/doctors/{id}/appointments/count', [DoctorController::class, 'appointmentsCount']);
+    Route::get('/doctors/{id}/appointments', [AppointmentController::class, 'doctorAppointments']);
+    Route::get('/doctors/{id}/appointments/request', [AppointmentController::class, 'appointmentsRequest']);
+
 });
