@@ -6,6 +6,7 @@ use App\Events\NewMessageSent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GetMessageRequest;
 use App\Http\Requests\StoreMessageRequest;
+use App\Models\Appointment;
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\User;
@@ -14,11 +15,11 @@ use Illuminate\Http\Request;
 
 class ChatMessageController extends Controller
 {
-    
+
     /**
-     * 
+     *
      * Get chat messages
-     * 
+     *
      * @param GetMessageRequest $request
      * @return JsonRepsonse
      */
@@ -43,9 +44,9 @@ class ChatMessageController extends Controller
     }
 
     /**
-     * 
+     *
      * Create a chat messages
-     * 
+     *
      * @param StoreMessageRequest $request
      * @return JsonRepsonse
      */
@@ -58,26 +59,27 @@ class ChatMessageController extends Controller
 
         $chatMessage->load('user');
 
-        // TODO send broadcast event to pusher
+        //
 
 
         // and send notification to onesignal services
-        $this->sendNotificationToOther($chatMessage);
+        //$this->sendNotificationToOther($chatMessage);
 
         return $this->success($chatMessage, 'Message has been sent successfully');
     }
 
-    
+
     /**
      * Send notification
-     * 
+     *
      * @param ChatMessage $chatMessage
-     * @return void 
+     * @return void
      */
     private function sendNotificationToOther(ChatMessage $chatMessage) : void {
 
 
         broadcast(new NewMessageSent($chatMessage))->toOthers();
+
 
         $user = auth()->user();
         $userId = $user->id;
@@ -88,7 +90,7 @@ class ChatMessageController extends Controller
         }])
         ->first();
 
-        
+
         if(count($chat->participants) > 0) {
             $otherUserId = $chat->participants[0]->user_id;
 
@@ -101,5 +103,19 @@ class ChatMessageController extends Controller
                 ]
             ]);
         }
+
+    }
+
+    public function getMessages($id)
+    {
+        $chat_id = Chat::where('appointment_id', $id)
+            ->select('id')
+            ->first();
+
+        $messages = ChatMessage::where('chat_id', $chat_id['id'])
+            ->get();
+
+
+        return $this->success($messages);
     }
 }
