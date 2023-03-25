@@ -75,10 +75,10 @@ class DoctorController extends Controller
         }
         */
 
-        $user->doctor()->create(/*[
-           'clinic_address' => $request->clinic_address,
+        $user->doctor()->create([
+           //'clinic_address' => $request->clinic_address,
             'session_price' => $request->session_price,
-        ]*/);
+        ]);
 
         $user->assignRole('Doctor');
 

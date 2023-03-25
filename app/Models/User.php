@@ -95,7 +95,6 @@ class User extends Authenticatable
      * Onesignal
      */
     public function sendNewMessageNotification(array $data) : void {
-        return;
         //$this->notify(new MessageSent($data));
     }
 

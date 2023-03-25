@@ -86,7 +86,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::apiResource('chat_message', ChatMessageController::class)->only(['index', 'store']);
     Route::apiResource('user', UserController::class)->only(['index']);
 
-    Route::get('/appointments/{id}/chat', [ChatMessageController::class, 'getMessages']);
+    Route::get('/appointments/chat/messages', [ChatMessageController::class, 'getMessages']);
 
     // Doctor
 
