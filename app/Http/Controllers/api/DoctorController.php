@@ -48,6 +48,10 @@ class DoctorController extends Controller
             //'date_of_birth' => 'required|date',
             //'gender' => 'required|string|max:6|min:4',
             //'profile_picture' => 'nullable|string',
+            //'phone_number' => 'string|max:255',
+           // 'date_of_birth' => 'required|date',
+           // 'gender' => 'required|string|max:6|min:4',
+           // 'profile_picture' => 'nullable|string',
             'isDoctor' => 'required|boolean',
             //'clinic_address' =>'string|max:255',
             //'session_price' => 'required|numeric'
@@ -75,10 +79,10 @@ class DoctorController extends Controller
         }
         */
 
-        $user->doctor()->create(/*[
+        $user->doctor()->create([
            'clinic_address' => $request->clinic_address,
             'session_price' => $request->session_price,
-        ]*/);
+        ]);
 
         $user->assignRole('Doctor');
 
@@ -209,6 +213,26 @@ class DoctorController extends Controller
         ];
 
         return $this->success($data);
+
+    
+    }
+
+    public function doctortime($id) : JsonResponse  {
+      
+        $times= DB::table('doctor_time')
+        ->select([
+            'doctor_time.id',
+            'doctor_time.time',
+            'doctor_time.date'
+            
+        ])
+        ->where('doc_id', '=', $id)
+        ->where('reserved', '=', 0)
+        ->get();
+        
+        return $this->success($times);
+
+
 
     }
 }

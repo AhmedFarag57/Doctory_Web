@@ -57,6 +57,8 @@ Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->nam
 Route::post('/doctors', [DoctorController::class, 'store'])->name('api.doctors.store');
 
 
+
+
 /**
  * Private API
  */
@@ -89,9 +91,10 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::get('/appointments/{id}/chat', [ChatMessageController::class, 'getMessages']);
 
     // Doctor
-
+    Route::get('/doctors/{id}/times', [DoctorController::class, 'doctortime']);
     Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
 
+    Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
     Route::get('/doctors/{id}', [DoctorController::class, 'Show'])->name('api.doctors.show');
     Route::put('/doctors/{id}', [DoctorController::class, 'update'])->name('api.doctors.update');
     Route::delete('/doctors/{id}', [DoctorController::class, 'destroy'])->name('api.doctors.destroy');
