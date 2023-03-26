@@ -63,7 +63,7 @@ class ChatMessageController extends Controller
 
 
         // and send notification to onesignal services
-        //$this->sendNotificationToOther($chatMessage);
+        $this->sendNotificationToOther($chatMessage);
 
         return $this->success($chatMessage, 'Message has been sent successfully');
     }
@@ -77,9 +77,7 @@ class ChatMessageController extends Controller
      */
     private function sendNotificationToOther(ChatMessage $chatMessage) : void {
 
-
         broadcast(new NewMessageSent($chatMessage))->toOthers();
-
 
         $user = auth()->user();
         $userId = $user->id;
@@ -106,16 +104,31 @@ class ChatMessageController extends Controller
 
     }
 
-    public function getMessages($id)
+    public function getMessages(Request $request)
     {
-        $chat_id = Chat::where('appointment_id', $id)
+        $data = $request->validate([
+            'page' => 'required|numeric',
+            'page_size' => 'nullable|numeric',
+            'appointment_id' => 'required|numeric',
+        ]);
+
+        $chatId = Chat::where('appointment_id', $data['appointment_id'])
             ->select('id')
             ->first();
 
-        $messages = ChatMessage::where('chat_id', $chat_id['id'])
-            ->get();
+        $currentPage = $data['page'];
+        $pageSize = $data['page_size'] ?? 15;
 
+        $messages = ChatMessage::where('chat_id', $chatId['id'])
+            ->with('user')
+            ->latest('created_at')
+            ->simplePaginate(
+                $pageSize,
+                ['*'],
+                'page',
+                $currentPage
+            );
 
-        return $this->success($messages);
+        return $this->success($messages->getCollection());
     }
 }

@@ -24,7 +24,10 @@ class DoctorController extends Controller
     public function index() : JsonResponse
     {
         $doctors = DB::table('doctors')
-            ->select('*')
+            ->select([
+                'doctors.*',
+                'users.name'
+            ])
             ->join('users', 'doctors.user_id', '=', 'users.id')
             ->get();
 
@@ -79,10 +82,7 @@ class DoctorController extends Controller
         }
         */
 
-        $user->doctor()->create([
-           'clinic_address' => $request->clinic_address,
-            'session_price' => $request->session_price,
-        ]);
+        $user->doctor()->create();
 
         $user->assignRole('Doctor');
 
@@ -214,25 +214,22 @@ class DoctorController extends Controller
 
         return $this->success($data);
 
-    
+
     }
 
     public function doctortime($id) : JsonResponse  {
-      
+
         $times= DB::table('doctor_time')
-        ->select([
-            'doctor_time.id',
-            'doctor_time.time',
-            'doctor_time.date'
-            
-        ])
-        ->where('doc_id', '=', $id)
-        ->where('reserved', '=', 0)
-        ->get();
-        
+            ->select([
+                'doctor_time.id',
+                'doctor_time.time',
+                'doctor_time.date'
+
+            ])
+            ->where('doc_id', '=', $id)
+            ->where('reserved', '=', 0)
+            ->get();
+
         return $this->success($times);
-
-
-
     }
 }
