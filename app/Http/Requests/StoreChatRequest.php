@@ -30,6 +30,7 @@ class StoreChatRequest extends FormRequest
             'user_id' => "required|exists:{$userModel},id",
             'name' => 'nullable',
             'is_private' => 'nullable|boolean',
+            'appointment_id' => 'required',
         ];
     }
 }
