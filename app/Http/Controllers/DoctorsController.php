@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use App\Models\Doctor;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DoctorsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index() : View
     {
         $doctors = Doctor::where('accepted', 1)->orderBy('id', 'asc')->paginate(10);
         return view('backend.admin.doctors.index')->with('doctors', $doctors);
@@ -22,9 +25,9 @@ class DoctorsController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function create()
+    public function create() : View
     {
         return view('backend.admin.doctors.create');
     }
@@ -37,7 +40,41 @@ class DoctorsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|max:255|string',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8|max:255',
+            'phone' => 'nullable|min:11|max:11',
+            'session_price' => 'required|numeric',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'isDoctor' => true,
+        ]);
+
+        if($request->hasFile('profile_picture')){
+            $profile = Str::slug($request->name) . '-' . $user->id . '.'.$request->profile_picture->getClientOriginalExtension();
+            $request->profile_picture->move(public_path('images/profile'), $profile);
+        }
+        else {
+            $profile = 'avatar.png';
+        }
+
+        $user->update([
+            'profile_picture' => $profile
+        ]);
+
+        $user->doctor()->create([
+            'session_price' => $request->session_price,
+            'phone' => $request->phone
+        ]);
+
+        $user->assignRole('Doctor');
+
+        return redirect()->route('doctors.request.index');
     }
 
     /**
@@ -74,7 +111,38 @@ class DoctorsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $doctor = Doctor::find($id);
+
+        $this->validate($request, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|string|max:255|unique:users,email,'.$doctor->user_id,
+            'session_price' => 'required|numeric',
+            'phone' => 'nullable|min:11|max:11',
+        ]);
+
+        $user = User::findOrFail($doctor->user_id);
+
+        if($request->hasFile('profile_picture')){
+            $profile = Str::slug($request->name) . '-' . $user->id . '.'.$request->profile_picture->getClientOriginalExtension();
+            $request->profile_picture->move(public_path('images/profile'), $profile);
+        }
+        else {
+            $profile = $user->profile_picture;
+        }
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'profile_picture' => $profile
+        ]);
+
+
+        $user->doctor()->update([
+            'phone' => $request->phone,
+            'session_price' => $request->session_price
+        ]);
+
+        return redirect()->route('doctors.index');
     }
 
     /**
@@ -92,16 +160,14 @@ class DoctorsController extends Controller
 
         $user->removeRole('Doctor');
         if ($user->delete()) {
-            /*
             if($user->profile_picture != 'avatar.png') {
                 $image_path = public_path() . '/images/profile/' . $user->profile_picture;
                 if (is_file($image_path) && file_exists($image_path)) {
                     unlink($image_path);
                 }
             }
-            */
         }
-        
-        return redirect('/doctors');
+
+        return redirect()->route('doctors.index');
     }
 }

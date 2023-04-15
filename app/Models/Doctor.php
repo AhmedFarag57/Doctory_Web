@@ -14,19 +14,17 @@ class Doctor extends Model
 
     protected $fillable =[
         'user_id',
-        
-        'clinic_address',
         'session_price',
+        'phone',
         'rating',
-        'accepted'
-        
+        'accepted',
+        'clinic_address',
     ];
 
     /**
      * Relation with User
      */
     public function user() : BelongsTo {
-
         return $this->belongsTo(User::class, 'user_id');
     }
 
