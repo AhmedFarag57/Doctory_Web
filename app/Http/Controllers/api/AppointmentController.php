@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreChatRequest;
 use App\Models\Appointment;
-use App\Models\Doctor;
+use App\Models\Chat;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Psy\Util\Json;
 use function PHPUnit\Framework\isNull;
 
 class AppointmentController extends Controller
@@ -174,7 +174,7 @@ class AppointmentController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function appointmentsAction(Request $request) : JsonResponse
+    public function appointmentsAction(Request $request)
     {
         $this->validate($request, [
            'appointment_id' => 'required',
@@ -187,10 +187,20 @@ class AppointmentController extends Controller
             $appointment->update([
                 'status' => 'accepted'
             ]);
-            $appointment->chat()->create([
-                'is_private' => true,
-                'created_by' => auth()->user()->id,
-            ]);
+
+            $patient_user_id = DB::table('patients')
+                ->select('users.id')
+                ->join('users', 'users.id', '=', 'user_id')
+                ->where('patients.id', '=', $appointment['patient_id'])
+                ->first();
+
+            $appointment->patient_id = $patient_user_id->id;
+
+            $request['user_id'] = $patient_user_id->id;
+
+            $storeChat = new ChatController();
+
+            $data = $storeChat->store($request);
         }
         else{
             $appointment->update([
@@ -199,6 +209,7 @@ class AppointmentController extends Controller
         }
 
         return $this->success($appointment);
+
     }
 
     /**
@@ -212,13 +223,15 @@ class AppointmentController extends Controller
         $appointments = DB::table('appointments')
             ->select([
                 'appointments.id',
-                'users.name',
                 'appointments.status',
                 'appointments.date',
-                'appointments.time'
+                'appointments.time',
+                'users.name',
+                'chats.id AS chat_id'
             ])
             ->join('patients', 'patients.id', '=', 'patient_id')
             ->join('users', 'users.id', '=', 'patients.user_id')
+            ->join('chats', 'chats.appointment_id', '=', 'appointments.id')
             ->where('doc_id', '=', $id)
             ->where('status', 'accepted')
             ->where('date', '=', $date)
@@ -232,10 +245,14 @@ class AppointmentController extends Controller
 
     public function labtest($id)
     {
-        $doctor_id = Doctor::select('id')
-            ->where('id', '=', $id)
-            ->get();
+        $appointment = Appointment::find($id);
 
-        return $this->success($doctor_id[0]['id']);
+        $patient_user_id = DB::table('patients')
+            ->select('users.id')
+            ->join('users', 'users.id', '=', 'user_id')
+            ->where('patients.id', '=', $appointment['patient_id'])
+            ->first();
+
+        return $this->success($patient_user_id->id);
     }
 }
