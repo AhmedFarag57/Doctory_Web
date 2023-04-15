@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GetChatRequest;
 use App\Http\Requests\StoreChatRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Chat;
 use Illuminate\Http\JsonResponse;
@@ -23,7 +24,7 @@ class ChatController extends Controller
 
         $isPrivate = 1;
         if($request->has('is_private')){
-            $isPrivate = (int)$data['is_private']; 
+            $isPrivate = (int)$data['is_private'];
         }
 
         $chats = Chat::where('is_private', $isPrivate)
@@ -32,17 +33,16 @@ class ChatController extends Controller
                     ->with('lastMessage.user', 'participants.user')
                     ->latest('updated_at')
                     ->get();
-        
+
         return $this->success($chats);
     }
 
     /**
      * Store a new chat
      *
-     * @param  StoreChatRequest  $request
-     * @return JsonResponse
+     * @param  Request  $request
      */
-    public function store(StoreChatRequest $request) : JsonResponse
+    public function store(Request $request)
     {
         $data = $this->prepareStoreData($request);
 
@@ -67,10 +67,10 @@ class ChatController extends Controller
 
             $chat->refresh()->load('lastMessage.user', 'participants.user');
 
-            return $this->success($chat);
+            return $chat;
         }
 
-        return $this->success($previousChat->load('lastMessage.user', 'participants.user'));
+        return $previousChat->load('lastMessage.user', 'participants.user');
     }
 
     /**
@@ -79,8 +79,8 @@ class ChatController extends Controller
      * @param  int  $otherUserId
      * @return mixed
      */
-    private function getPreviousChat(int $otherUserId) : mixed {
-
+    private function getPreviousChat(int $otherUserId) : mixed
+    {
         $userId = auth()->user()->id;
 
         return Chat::where('is_private', 1)
@@ -99,9 +99,15 @@ class ChatController extends Controller
      * @param  StoreChatRequest  $request
      * @return array
      */
-    private function prepareStoreData(StoreChatRequest $request) : array {
-        $data = $request->validated();
-        
+    private function prepareStoreData(Request $request) : array
+    {
+        $data = $request->validate([
+            'user_id' => "required",
+            'name' => 'nullable',
+            'is_private' => 'nullable|boolean',
+            'appointment_id' => 'required',
+        ]);
+
         $otherUserId = (int)$data['user_id'];
 
         unset($data['user_id']);
