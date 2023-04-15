@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Doctor;
+use App\Models\Patient;
 
 class HomeController extends Controller
 {
@@ -26,7 +29,32 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user = Auth::user();
+
+        if($user->hasRole('Admin'))
+        {
+            $doctors = Doctor::where('accepted', 1)->get();
+            $doctorsCount = $doctors->count();
+
+            $patientsCount = Patient::count();
+
+            return view('home', compact('doctorsCount', 'patientsCount'));
+        }
+        else if($user->hasRole('Doctor'))
+        {
+            $appointments = Appointment::where('doc_id', $user->doctor->id)->get();
+            $appointmentsCount = $appointments->count();
+
+            return view('home', compact('appointmentsCount'));
+        }
+        else if($user->hasRole('Patient'))
+        {
+            $wallet = Patient::where('user_id', $user->id)->value('wallet');
+
+            return view('home', compact('wallet'));
+        }
+        
+        return view('errors.norole');
     }
 
     /**

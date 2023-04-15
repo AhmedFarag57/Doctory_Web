@@ -22,7 +22,7 @@
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Name
+                            <b style="color: red;">* </b>Name
                         </label>
                     </div>
                     <div class="md:w-2/3">
@@ -36,7 +36,7 @@
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Email
+                            <b style="color: red;">* </b>Email
                         </label>
                     </div>
                     <div class="md:w-2/3">
@@ -50,7 +50,7 @@
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Password
+                            <b style="color: red;">* </b>Password
                         </label>
                     </div>
                     <div class="md:w-2/3">
@@ -78,68 +78,18 @@
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Gender
+                            <b style="color: red;">* </b>Session Price
                         </label>
                     </div>
                     <div class="md:w-2/3">
-                        <div class="flex flex-row items-center">
-                            <label class="block text-gray-500 font-bold">
-                                <input name="gender" class="mr-2 leading-tight" type="radio" value="male">
-                                <span class="text-sm">Male</span>
-                            </label>
-                            <label class="ml-4 block text-gray-500 font-bold">
-                                <input name="gender" class="mr-2 leading-tight" type="radio" value="female">
-                                <span class="text-sm">Female</span>
-                            </label>
-                        </div>
-                        @error('gender')
+                        <input name="session_price" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('session_price') }}">
+                        @error('session_price')
                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
 
-                <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Date of Birth
-                        </label>
-                    </div>
-                    <div class="md:w-2/3">
-                        <input name="dateofbirth" id="datepicker-tc" autocomplete="off" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="date" value="{{ old('dateofbirth') }}">
-                        @error('dateofbirth')
-                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Current Address
-                        </label>
-                    </div>
-                    <div class="md:w-2/3">
-                        <input name="address" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text" value="{{ old('address') }}">
-                        @error('address')
-                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Salary
-                        </label>
-                    </div>
-                    <div class="md:w-2/3">
-                        <input name="salary" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500" type="text">
-                        @error('salary')
-                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
+                {{--  
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">
                         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
@@ -160,33 +110,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="md:flex md:items-center mb-6">
-                    <div class="md:w-1/3">
-                        <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                            Period
-                        </label>
-                    </div>
-                    <div class="md:w-2/3">
-                        <div class="flex flex-column items-center">
-                            <label class="block text-gray-500 font-bold">
-                                <input name="period" class="mr-2 leading-tight" type="radio" value="8to4">
-                                <span class="text-sm">8:00am - 4:00pm</span>
-                            </label>
-                            <label class="ml-4 block text-gray-500 font-bold">
-                                <input name="period" class="mr-2 leading-tight" type="radio" value="4to12">
-                                <span class="text-sm">4:00pm - 12:00am</span>
-                            </label>
-                            <label class="ml-4 block text-gray-500 font-bold">
-                                <input name="period" class="mr-2 leading-tight" type="radio" value="12to8">
-                                <span class="text-sm">12:00am - 8:00am</span>
-                            </label>
-                        </div>
-                        @error('period')
-                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
+                --}}
 
                 <div class="md:flex md:items-center mb-6">
                     <div class="md:w-1/3">

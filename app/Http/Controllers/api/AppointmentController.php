@@ -245,8 +245,14 @@ class AppointmentController extends Controller
 
     public function labtest($id)
     {
-        $date = date("Y-m-d");
+        $appointment = Appointment::find($id);
 
-        return $date;
+        $patient_user_id = DB::table('patients')
+            ->select('users.id')
+            ->join('users', 'users.id', '=', 'user_id')
+            ->where('patients.id', '=', $appointment['patient_id'])
+            ->first();
+
+        return $this->success($patient_user_id->id);
     }
 }

@@ -7,11 +7,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Doctor;
 use Illuminate\Http\JsonResponse;
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Password;
 use function PHPUnit\Framework\isNull;
 
 class DoctorController extends Controller
@@ -46,43 +44,21 @@ class DoctorController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|string|max:255|unique:users',
             'password' => 'required|min:8|max:255',
-            'ssn' => 'required|string|min:14|max:14',
-            //'phone_number' => 'string|max:255',
-            //'date_of_birth' => 'required|date',
-            //'gender' => 'required|string|max:6|min:4',
-            //'profile_picture' => 'nullable|string',
-            //'phone_number' => 'string|max:255',
-           // 'date_of_birth' => 'required|date',
-           // 'gender' => 'required|string|max:6|min:4',
-           // 'profile_picture' => 'nullable|string',
-            'isDoctor' => 'required|boolean',
-            //'clinic_address' =>'string|max:255',
-            //'session_price' => 'required|numeric'
+            'phone' => 'nullable|min:11|max:11',
+            'session_price' => 'required|numeric'
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'ssn' => $request->ssn,
-            //'phone_number' => $request->phone_number,
-            //'date_of_birth' => $request->date_of_birth,
-            //'gender' => $request->gender,
-            'isDoctor' => $request->isDoctor,
+            'isDoctor' => true,
         ]);
 
-        /*
-        if($request->hasFile('profile_picture')){
-            $profile = Str::slug($request->name) . '-' . $user->id . '.' . $request->profile_picture->getClientOriginalExtension();
-            $request->profile_picture->move(public_path('images/profile'), $profile);
-
-            $user->update([
-                'profile_picture' => $profile
-            ]);
-        }
-        */
-
-        $user->doctor()->create();
+        $user->doctor()->create([
+            'session_price' => $request->session_price,
+            'phone' => $request->phone
+        ]);
 
         $user->assignRole('Doctor');
 
@@ -126,38 +102,23 @@ class DoctorController extends Controller
         $this->validate($request, [
             'name' => 'required|string|max:255',
             'email' => 'required|email|string|max:255|unique:users',
-            'ssn' => 'required|string|min:14|max:14',
-            'phone_number' => 'string|max:255',
-            'date_of_birth' => 'required|date',
-            'gender' => 'required|string|max:6|min:4',
-            'profile_picture' => 'image:jpeg,png,jpg,gif,svg|max:2048',
-            'clinic_address' =>'string|max:255',
+            'password' => 'required|min:8|max:255',
+            'phone' => 'nullable|min:11|max:11',
             'session_price' => 'required|numeric'
         ]);
-
-        if($request->hasFile('profile_picture')){
-            $profile = Str::slug($request->name) . '-' . $user->id . '.' . $request->profile_picture->getClientOriginalExtension();
-            $request->profile_picture->move(public_path('images/profile'), $profile);
-        }
-        else {
-            $profile = $user->profile_picture;
-        }
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'date_of_birth' => $request->date_of_birth,
-            'gender' => $request->gender,
-            'profile_picture' => $profile,
+            'phone' => $request->phone,
         ]);
 
         $user->doctor()->update([
-            'clinic_address' => $request->clinic_address,
-            'session_price' => $request->session_price
+            'session_price' => $request->session_price,
+            'phone' => $request->phone
         ]);
 
-        return $this->success($user, 'Doctor updated successfully');
+        return $this->success(null, 'Doctor updated successfully');
     }
 
     /**
