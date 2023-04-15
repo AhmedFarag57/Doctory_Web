@@ -21,4 +21,15 @@ class UserController extends Controller
         return $this->success($users);
     }
 
+    public function blockUser($id)
+    {
+        $user = User::find($id);
+        
+        $user->update([
+            'blocked' => !$user->blocked
+        ]);
+
+        return redirect()->back();
+    }
+
 }

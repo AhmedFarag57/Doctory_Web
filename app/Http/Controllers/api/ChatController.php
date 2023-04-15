@@ -79,8 +79,8 @@ class ChatController extends Controller
      * @param  int  $otherUserId
      * @return mixed
      */
-    private function getPreviousChat(int $otherUserId) : mixed {
-
+    private function getPreviousChat(int $otherUserId) : mixed
+    {
         $userId = auth()->user()->id;
 
         return Chat::where('is_private', 1)
@@ -99,12 +99,10 @@ class ChatController extends Controller
      * @param  StoreChatRequest  $request
      * @return array
      */
-    private function prepareStoreData(Request $request) : array {
-
-        $userModel = get_class(new User());
-
+    private function prepareStoreData(Request $request) : array
+    {
         $data = $request->validate([
-            'user_id' => "required|exists:{$userModel},id",
+            'user_id' => "required",
             'name' => 'nullable',
             'is_private' => 'nullable|boolean',
             'appointment_id' => 'required',
