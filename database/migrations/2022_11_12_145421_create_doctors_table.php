@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             //$table->string('certifications');
+            $table->string('phone')->nullable();
             $table->decimal('session_price', 6, 2)->default(0);
             $table->decimal('rating', 5, 2)->default(5);
             $table->boolean('accepted')->default(0);
