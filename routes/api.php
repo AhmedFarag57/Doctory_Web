@@ -9,7 +9,11 @@ use App\Http\Controllers\api\DoctorController;
 use App\Http\Controllers\api\AppointmentController;
 use App\Http\Controllers\api\PatientController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+
+
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +61,8 @@ Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->nam
 Route::post('/doctors', [DoctorController::class, 'store'])->name('api.doctors.store');
 
 
+
+
 /**
  * Private API
  */
@@ -86,12 +92,13 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::apiResource('chat_message', ChatMessageController::class)->only(['index', 'store']);
     Route::apiResource('user', UserController::class)->only(['index']);
 
-    Route::get('/appointments/{id}/chat', [ChatMessageController::class, 'getMessages']);
+    Route::get('/appointments/chat/messages', [ChatMessageController::class, 'getMessages']);
 
     // Doctor
-
+    Route::get('/doctors/{id}/times', [DoctorController::class, 'doctortime']);
     Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
 
+    Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
     Route::get('/doctors/{id}', [DoctorController::class, 'Show'])->name('api.doctors.show');
     Route::put('/doctors/{id}', [DoctorController::class, 'update'])->name('api.doctors.update');
     Route::delete('/doctors/{id}', [DoctorController::class, 'destroy'])->name('api.doctors.destroy');
