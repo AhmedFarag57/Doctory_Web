@@ -9,7 +9,11 @@ use App\Http\Controllers\api\DoctorController;
 use App\Http\Controllers\api\AppointmentController;
 use App\Http\Controllers\api\PatientController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+
+
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 /*
 |--------------------------------------------------------------------------

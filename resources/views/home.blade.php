@@ -23,7 +23,7 @@
         @endrole
 
         @role('Patient')
-        @include('dashboard.pharmacist')
+        @include('dashboard.patient')
         @endrole
 
     </div>

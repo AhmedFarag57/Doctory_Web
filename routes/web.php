@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\AssignRoleController;
+use App\Http\Controllers\DoctorRequestedController;
 use App\Http\Controllers\DoctorsController;
-
+use App\Http\Controllers\PatientsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -33,7 +36,7 @@ Route::get('/profile/changepassword', [HomeController::class, 'changePassword'])
 Route::post('/profile/changepassword', [HomeController::class, 'updatePassword'])->name('profile.changepassword');
 
 
-
+// Routes for Admin
 Route::group(['middleware' => ['auth', 'role:Admin']], function(){
 
     // ....
@@ -62,6 +65,9 @@ Route::group(['middleware' => ['auth', 'role:Admin']], function(){
     Route::put('/assign-role/{id}/update', [AssignRoleController::class, 'update'])->name('assign-role.update')->where('id', '[0-9]+');
     Route::delete('/assign-role/{id}/destroy', [AssignRoleController::class, 'destroy'])->name('assign-role.destroy')->where('id', '[0-9]+');
 
+    // Users
+    Route::get('/users/{id}/block', [UserController::class, 'blockUser'])->name('users.block')->where('id', '[0-9]+');
+
     // Doctors
     Route::get('/doctors', [DoctorsController::class, 'index'])->name('doctors.index');
     Route::get('/doctors/{id}', [DoctorsController::class, 'show'])->name('doctors.show')->where('id', '[0-9]+');
@@ -71,5 +77,36 @@ Route::group(['middleware' => ['auth', 'role:Admin']], function(){
     Route::put('/doctors/{id}/update', [DoctorsController::class, 'update'])->name('doctors.update')->where('id', '[0-9]+');
     Route::delete('/doctors/{id}/destroy', [DoctorsController::class, 'destroy'])->name('doctors.destroy')->where('id', '[0-9]+');
 
+    // Doctor Request
+    Route::get('/doctors/request', [DoctorRequestedController::class, 'index'])->name('doctors.request.index');
+    Route::get('/doctors/request/{id}', [DoctorRequestedController::class, 'show'])->name('doctors.request.show')->where('id', '[0-9]+');
+    Route::get('/doctors/request/{id}/accept', [DoctorRequestedController::class, 'acceptRequest'])->name('doctors.request.accept')->where('id', '[0-9]+');
 
+    // Patients
+    Route::get('/patients', [PatientsController::class, 'index'])->name('patients.index');
+    Route::get('/patients/{id}', [PatientsController::class, 'show'])->name('patients.show')->where('id', '[0-9]+');
+    Route::get('/patients/create', [PatientsController::class, 'create'])->name('patients.create');
+    Route::post('/patients/store', [PatientsController::class, 'store'])->name('patients.store');
+    Route::get('/patients/{id}/edit', [PatientsController::class, 'edit'])->name('patients.edit')->where('id', '[0-9]+');
+    Route::put('/patients/{id}/update', [PatientsController::class, 'update'])->name('patients.update')->where('id', '[0-9]+');
+    Route::delete('/patients/{id}/destroy', [PatientsController::class, 'destroy'])->name('patients.destroy')->where('id', '[0-9]+');
+
+    // Appointments
+    Route::get('/appointments', [AppointmentsController::class, 'index'])->name('appointments.index');
+    Route::get('/appointments/{id}', [AppointmentsController::class, 'show'])->name('appointments.show')->where('id', '[0-9]+');
+    Route::get('/appointments/create', [AppointmentsController::class, 'create'])->name('appointments.create');
+    Route::post('/appointments/store', [AppointmentsController::class, 'store'])->name('appointments.store');
+    Route::get('/appointments/{id}/edit', [AppointmentsController::class, 'edit'])->name('appointments.edit')->where('id', '[0-9]+');
+    Route::put('/appointments/{id}/update', [AppointmentsController::class, 'update'])->name('appointments.update')->where('id', '[0-9]+');
+    Route::delete('/appointments/{id}/destroy', [AppointmentsController::class, 'destroy'])->name('appointments.destroy')->where('id', '[0-9]+');
+});
+
+// Routes for Doctor
+Route::group(['middleware' => ['auth', 'role:Doctor']], function(){
+    // ...
+});
+
+// Routes for Patient
+Route::group(['middleware' => ['auth', 'role:Patient']], function(){
+    // ...
 });
