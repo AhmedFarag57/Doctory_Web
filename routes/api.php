@@ -3,7 +3,6 @@
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\api\ChatMessageController;
-use App\Http\Controllers\api\SessionController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\DoctorController;
 use App\Http\Controllers\api\AppointmentController;
@@ -11,9 +10,6 @@ use App\Http\Controllers\api\PatientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-
-
-Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 /*
 |--------------------------------------------------------------------------
@@ -26,13 +22,11 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
-
-Route::resource('/patients', PatientController::class);
-
+/**
+ * Route for broadcasting
+ */
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 /**
  * Test Public API
@@ -40,6 +34,7 @@ Route::resource('/patients', PatientController::class);
 Route::get('/public_test', function(){
     return 'Hello world from public API';
 });
+
 /**
  * Test Private API
  */
@@ -47,26 +42,48 @@ Route::get('/private_test', function(){
     return 'Hello world from private API';
 })->middleware('auth:sanctum');
 
-
-
 /**
  * Public API
  */
-Route::get('/sessions', [SessionController::class, 'index'])->name('api.sessions.index');
-Route::get('/sessions/{id}', [SessionController::class, 'show'])->name('api.sessions.show');
 Route::post('/register', [AuthController::class, 'register'])->name('api.register');
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 Route::post('/login_with_token', [AuthController::class, 'loginWithToken'])->name('api.loginWithToken');
-
+// Register for Doctor
 Route::post('/doctors', [DoctorController::class, 'store'])->name('api.doctors.store');
+// Register for Patient
+Route::post('/patients', [PatientController::class, 'store'])->name('api.patients.store');
 
+/**
+ * Routes for Admin
+ */
+Route::group(['middleware' => ['auth:sanctum', 'role:Admin']], function(){
+    // ..
+});
 
+/**
+ * Routes for Doctor
+ */
+Route::group(['middleware' => ['auth:sanctum', 'role:Doctor']], function(){
+    // ..
+    Route::post('/doctors/{id}/times', [DoctorController::class, 'doctorTimeStore']);
+});
 
+/**
+ * Routes for Patient
+ */
+Route::group(['middleware' => ['auth:sanctum', 'role:Patient']], function(){
+    // ..
+
+    Route::get('/patients/{id}/appointments', [AppointmentController::class, 'patientAppointment']);
+});
 
 /**
  * Private API
  */
 Route::group(['middleware' => ['auth:sanctum']], function(){
+    
+    // Logout Route
+    Route::get('/logout', [AuthController::class, 'logout'])->name('api.logout');
 
     /**
      *  GET     : /appointments
@@ -75,17 +92,14 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
      *  DELETE  : /appointments/{id}
      */
     Route::resource('/appointments', AppointmentController::class);
-    Route::get('/patients/{id}/appointments', [AppointmentController::class, 'patientAppointment']);
-
+    
     /**
      *  GET     : /patients
      *  POST    : /patients
      *  PUT     : /patients/{id}
      *  DELETE  : /patients/{id}
      */
-    //Route::resource('/patients', PatientController::class);
-
-    Route::get('/logout', [AuthController::class, 'logout'])->name('api.logout');
+    Route::resource('/patients', PatientController::class);
 
     // Chat
     Route::apiResource('chat', ChatController::class)->only(['index', 'store', 'show']);

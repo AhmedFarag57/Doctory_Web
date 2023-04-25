@@ -68,23 +68,25 @@ class AuthController extends Controller
 
         $model = null;
 
-        if($user->hasRole('Doctor')){
+        if($request->app == 'doctor' && $user->hasRole('Doctor'))
+        {
             $model = Doctor::where('user_id', $user->id)->first();
         }
-        else if($user->hasRole('Patient')){
+        else if($request->app == 'patient' && $user->hasRole('Patient'))
+        {
             $model = Patient::where('user_id', $user->id)->first();
         }
-
+        else
+        {
+            return $this->error('You can\'t login with this email to this app');
+        }
 
         $token = $user->createToken(User::USER_TOKEN);
 
-
         return $this->success([
-
             'user' => $user,
             'model' => $model,
             'token' => $token->plainTextToken,
-
         ], 'Login successfully', 201);
     }
 

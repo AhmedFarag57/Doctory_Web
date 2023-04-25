@@ -34,11 +34,11 @@ class AppointmentController extends Controller
     public function store(Request $request) : JsonResponse
     {
         $request->validate([
-            'doc_id' => 'required',
-            'patient_id' => 'required',
-            'status' => 'required',
-            'session_price' => 'required',
-            'time' => 'required',
+            'doc_id' => 'required|string|max:255',
+            'patient_id' => 'required|string|max:255',
+            'session_price' => 'required|string|max:255',
+            'time_from' => 'required',
+            'time_to' => 'required',
             'date' => 'required'
         ]);
 
@@ -119,13 +119,19 @@ class AppointmentController extends Controller
         $appointment = DB::table('appointments')
             ->select([
                 'users.name',
+                'appointments.id',
                 'appointments.status',
+                'appointments.session_price',
                 'appointments.date',
-                'appointments.time'
+                'appointments.time_from',
+                'appointments.time_to',
+                'chats.id AS chat_id'
             ])
             ->join('doctors', 'doctors.id', '=', 'doc_id')
             ->join('users', 'users.id', '=', 'doctors.user_id')
+            ->join('chats', 'chats.appointment_id', '=', 'appointments.id')
             ->where('patient_id', '=', $id)
+            ->orderBy('date')
             ->get();
 
         return $this->success($appointment);
@@ -141,7 +147,8 @@ class AppointmentController extends Controller
             'appointments.id',
             'appointments.status',
             'appointments.date',
-            'appointments.time'
+            'appointments.time_from',
+            'appointments.time_to'
         ])->where('doc_id', $id)->get();
 
         return $this->success($appointments);
@@ -155,11 +162,13 @@ class AppointmentController extends Controller
     {
         $appointments = DB::table('appointments')
             ->select([
-                'appointments.id',
                 'users.name',
+                'appointments.id',
                 'appointments.status',
                 'appointments.date',
-                'appointments.time'
+                'appointments.time_from',
+                'appointments.time_to',
+                'appointments.session_price'
             ])
             ->join('patients', 'patients.id', '=', 'patient_id')
             ->join('users', 'users.id', '=', 'patients.user_id')
@@ -219,13 +228,14 @@ class AppointmentController extends Controller
     public function todayAppointments($id) : JsonResponse
     {
         $date = date("Y-m-d");
-        //$date = '2022-12-28';
         $appointments = DB::table('appointments')
             ->select([
                 'appointments.id',
                 'appointments.status',
                 'appointments.date',
-                'appointments.time',
+                'appointments.time_from',
+                'appointments.time_to',
+                'appointments.session_price',
                 'users.name',
                 'chats.id AS chat_id'
             ])
@@ -235,7 +245,7 @@ class AppointmentController extends Controller
             ->where('doc_id', '=', $id)
             ->where('status', 'accepted')
             ->where('date', '=', $date)
-            ->orderBy('time')
+            ->orderBy('time_from')
             ->get();
 
 
