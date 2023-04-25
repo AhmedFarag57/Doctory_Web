@@ -27,6 +27,7 @@ class DoctorController extends Controller
                 'users.name'
             ])
             ->join('users', 'doctors.user_id', '=', 'users.id')
+            ->where('accepted', 1)
             ->get();
 
         return $this->success($doctors);
@@ -43,7 +44,7 @@ class DoctorController extends Controller
         $this->validate($request, [
             'name' => 'required|string|max:255',
             'email' => 'required|email|string|max:255|unique:users',
-            'password' => 'required|min:8|max:255',
+            'password' => 'required|min:8|max:255|confirmed',
             'phone' => 'nullable|min:11|max:11',
             'session_price' => 'required|numeric'
         ]);
@@ -178,17 +179,34 @@ class DoctorController extends Controller
 
     }
 
-    public function doctortime($id) : JsonResponse  {
+    public function doctorTimeStore(Request $request, $id) : JsonResponse
+    {   
+        $this->validate($request, [
+            'dates' => 'required',
+            'timesFrom'=> 'required',
+            'timesTo' => 'required',
+        ]);
+        
+        
+        
+
+        return $this->success($request->dates, 'The times recorded successfully');
+    }
+
+    public function doctortime($id) : JsonResponse  
+    {
+        $date = date("Y-m-d");
 
         $times= DB::table('doctor_time')
             ->select([
                 'doctor_time.id',
-                'doctor_time.time',
+                'doctor_time.time_from',
+                'doctor_time.time_to',
                 'doctor_time.date'
-
             ])
             ->where('doc_id', '=', $id)
             ->where('reserved', '=', 0)
+            ->where('date', $date)
             ->get();
 
         return $this->success($times);

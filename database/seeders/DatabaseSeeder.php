@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             'name'          => 'Admin',
             'email'         => 'admin@gmail.com',
             'password'      => bcrypt('123456789'),
-            'ssn'           => '12345678912345',
             'created_at'    => date("Y-m-d H:i:s")
         ]);
 
