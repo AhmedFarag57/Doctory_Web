@@ -183,13 +183,20 @@ class DoctorController extends Controller
         $times= DB::table('doctor_time')
             ->select([
                 'doctor_time.id',
-                'doctor_time.time',
+                'doctor_startime.time',
+                'doctor_endtime.time',
                 'doctor_time.date'
 
             ])
             ->where('doc_id', '=', $id)
             ->where('reserved', '=', 0)
             ->get();
+
+        return $this->success($times);
+    }
+    public function doctortimestore(Request $request,$id) : JsonResponse  {
+
+       
 
         return $this->success($times);
     }
