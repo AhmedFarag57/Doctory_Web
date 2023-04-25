@@ -211,4 +211,10 @@ class DoctorController extends Controller
 
         return $this->success($times);
     }
+    public function doctortimestore(Request $request,$id) : JsonResponse  {
+
+       
+
+        return $this->success($times);
+    }
 }

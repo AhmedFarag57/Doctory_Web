@@ -110,6 +110,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
 
     // Doctor
     Route::get('/doctors/{id}/times', [DoctorController::class, 'doctortime']);
+    Route::post('/doctors/{id}/times', [DoctorController::class, 'doctortimestore']);
     Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
 
     Route::get('/doctors', [DoctorController::class, 'index'])->name('api.doctors.index');
