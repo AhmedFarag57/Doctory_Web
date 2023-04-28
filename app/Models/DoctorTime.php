@@ -9,11 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DoctorTime extends Model
 {
     use HasFactory;
+
+    // Table name
+    protected $table = 'doctor_time';
     
     protected $fillable =[
         'doc_id',
-        'startime',
-        'endtime',
+        'time_from',
+        'time_to',
         'date',
         'reserved',
     ];

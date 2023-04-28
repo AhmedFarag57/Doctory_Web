@@ -46,7 +46,7 @@ class DoctorController extends Controller
             'email' => 'required|email|string|max:255|unique:users',
             'password' => 'required|min:8|max:255|confirmed',
             'phone' => 'nullable|min:11|max:11',
-            'session_price' => 'required|numeric'
+            'session_price' => 'nullable|numeric'
         ]);
 
         $user = User::create([
@@ -155,66 +155,5 @@ class DoctorController extends Controller
         }
 
         return $this->error('Doctor with this ID does not exist');
-    }
-
-    /**
-     * Count the number of appointments for a doctor
-     *
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function appointmentsCount($id) : JsonResponse  {
-
-        $count = DB::table('appointments')
-            ->select('doc_id')
-            ->where('doc_id', $id)
-            ->count('doc_id');
-
-        $data = [
-            'count' => $count
-        ];
-
-        return $this->success($data);
-
-
-    }
-
-    public function doctorTimeStore(Request $request, $id) : JsonResponse
-    {   
-        $this->validate($request, [
-            'dates' => 'required',
-            'timesFrom'=> 'required',
-            'timesTo' => 'required',
-        ]);
-        
-        
-        
-
-        return $this->success($request->dates, 'The times recorded successfully');
-    }
-
-    public function doctortime($id) : JsonResponse  
-    {
-        $date = date("Y-m-d");
-
-        $times= DB::table('doctor_time')
-            ->select([
-                'doctor_time.id',
-                'doctor_time.time_from',
-                'doctor_time.time_to',
-                'doctor_time.date'
-            ])
-            ->where('doc_id', '=', $id)
-            ->where('reserved', '=', 0)
-            ->where('date', $date)
-            ->get();
-
-        return $this->success($times);
-    }
-    public function doctortimestore(Request $request,$id) : JsonResponse  {
-
-       
-
-        return $this->success($times);
     }
 }

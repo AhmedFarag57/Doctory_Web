@@ -29,20 +29,32 @@ class AuthController extends Controller
         // App/Http/Request/RegisterRequest
         $data = $request->validated();
 
-        $data['password'] = Hash::make($data['password']);
+        if($data['app'] == 'doctor')
+        {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'isDoctor' => true,
+            ]);
+            $user->doctor()->create();
+            $user->assignRole('Doctor');
+            return $this->success(null, 'Doctor created successfully');
+        }
+        else if($data['app'] == 'patient')
+        {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'isDoctor' => false,
+            ]);
+            $user->patient()->create();
+            $user->assignRole('Patient');
+            return $this->success(null, 'Patient created successfully');
+        }
 
-
-        $user = User::create($data);
-
-
-        $token = $user->createToken(User::USER_TOKEN);
-
-        return $this->success([
-
-            'user' => $user,
-            'token' => $token->plainTextToken,
-
-        ], 'User has been register successfully.', 201);
+        return $this->error('Error in creating User');
     }
 
     /**
@@ -82,6 +94,8 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken(User::USER_TOKEN);
+
+        unset($user->roles);
 
         return $this->success([
             'user' => $user,
