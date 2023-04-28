@@ -27,6 +27,7 @@ class DoctorController extends Controller
                 'users.name'
             ])
             ->join('users', 'doctors.user_id', '=', 'users.id')
+            ->where('accepted', 1)
             ->get();
 
         return $this->success($doctors);
@@ -43,9 +44,9 @@ class DoctorController extends Controller
         $this->validate($request, [
             'name' => 'required|string|max:255',
             'email' => 'required|email|string|max:255|unique:users',
-            'password' => 'required|min:8|max:255',
+            'password' => 'required|min:8|max:255|confirmed',
             'phone' => 'nullable|min:11|max:11',
-            'session_price' => 'required|numeric'
+            'session_price' => 'nullable|numeric'
         ]);
 
         $user = User::create([
@@ -154,43 +155,5 @@ class DoctorController extends Controller
         }
 
         return $this->error('Doctor with this ID does not exist');
-    }
-
-    /**
-     * Count the number of appointments for a doctor
-     *
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function appointmentsCount($id) : JsonResponse  {
-
-        $count = DB::table('appointments')
-            ->select('doc_id')
-            ->where('doc_id', $id)
-            ->count('doc_id');
-
-        $data = [
-            'count' => $count
-        ];
-
-        return $this->success($data);
-
-
-    }
-
-    public function doctortime($id) : JsonResponse  {
-
-        $times= DB::table('doctor_time')
-            ->select([
-                'doctor_time.id',
-                'doctor_time.time',
-                'doctor_time.date'
-
-            ])
-            ->where('doc_id', '=', $id)
-            ->where('reserved', '=', 0)
-            ->get();
-
-        return $this->success($times);
     }
 }

@@ -16,7 +16,8 @@ class CreateDoctorTimeTable extends Migration
         Schema::create('doctor_time', function (Blueprint $table) {
             $table->id();
             $table->foreignId('doc_id')->constrained('doctors')->cascadeOnDelete();
-            $table->string('time');
+            $table->time('time_from');
+            $table->time('time_to');
             $table->date('date');
             $table->boolean('reserved')->default(0);
             $table->timestamps();

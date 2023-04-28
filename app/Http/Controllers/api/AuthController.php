@@ -29,20 +29,32 @@ class AuthController extends Controller
         // App/Http/Request/RegisterRequest
         $data = $request->validated();
 
-        $data['password'] = Hash::make($data['password']);
+        if($data['app'] == 'doctor')
+        {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'isDoctor' => true,
+            ]);
+            $user->doctor()->create();
+            $user->assignRole('Doctor');
+            return $this->success(null, 'Doctor created successfully');
+        }
+        else if($data['app'] == 'patient')
+        {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'isDoctor' => false,
+            ]);
+            $user->patient()->create();
+            $user->assignRole('Patient');
+            return $this->success(null, 'Patient created successfully');
+        }
 
-
-        $user = User::create($data);
-
-
-        $token = $user->createToken(User::USER_TOKEN);
-
-        return $this->success([
-
-            'user' => $user,
-            'token' => $token->plainTextToken,
-
-        ], 'User has been register successfully.', 201);
+        return $this->error('Error in creating User');
     }
 
     /**
@@ -68,23 +80,27 @@ class AuthController extends Controller
 
         $model = null;
 
-        if($user->hasRole('Doctor')){
+        if($request->app == 'doctor' && $user->hasRole('Doctor'))
+        {
             $model = Doctor::where('user_id', $user->id)->first();
         }
-        else if($user->hasRole('Patient')){
+        else if($request->app == 'patient' && $user->hasRole('Patient'))
+        {
             $model = Patient::where('user_id', $user->id)->first();
         }
-
+        else
+        {
+            return $this->error('You can\'t login with this email to this app');
+        }
 
         $token = $user->createToken(User::USER_TOKEN);
 
+        unset($user->roles);
 
         return $this->success([
-
             'user' => $user,
             'model' => $model,
             'token' => $token->plainTextToken,
-
         ], 'Login successfully', 201);
     }
 
