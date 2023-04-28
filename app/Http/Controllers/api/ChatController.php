@@ -50,9 +50,9 @@ class ChatController extends Controller
             return $this->error('You can not create a chat with your self');
         }
 
-        $previousChat = $this->getPreviousChat($data['otherUserId']);
+        //$previousChat = $this->getPreviousChat($data['otherUserId']);
 
-        if($previousChat === null){
+        //if($previousChat === null){
 
             $chat = Chat::create($data['data']);
 
@@ -68,9 +68,9 @@ class ChatController extends Controller
             $chat->refresh()->load('lastMessage.user', 'participants.user');
 
             return $chat;
-        }
+        //}
 
-        return $previousChat->load('lastMessage.user', 'participants.user');
+        //return $previousChat->load('lastMessage.user', 'participants.user');
     }
 
     /**
