@@ -18,7 +18,6 @@ class Doctor extends Model
         'phone',
         'rating',
         'accepted',
-        'clinic_address',
     ];
 
     /**
@@ -40,5 +39,9 @@ class Doctor extends Model
      */
     public function appointment() : HasMany{
         return $this->hasMany(Appointment::class, 'doc_id');
+    }
+
+    public function doctorTime() : HasMany{
+        return $this->hasMany(DoctorTime::class, 'doc_id');
     }
 }
