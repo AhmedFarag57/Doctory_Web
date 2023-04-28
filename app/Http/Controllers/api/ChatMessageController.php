@@ -59,9 +59,6 @@ class ChatMessageController extends Controller
 
         $chatMessage->load('user');
 
-        //
-
-
         // and send notification to onesignal services
         $this->sendNotificationToOther($chatMessage);
 
@@ -78,7 +75,7 @@ class ChatMessageController extends Controller
     private function sendNotificationToOther(ChatMessage $chatMessage) : void {
 
         broadcast(new NewMessageSent($chatMessage))->toOthers();
-
+        
         $user = auth()->user();
         $userId = $user->id;
 
@@ -91,7 +88,6 @@ class ChatMessageController extends Controller
 
         if(count($chat->participants) > 0) {
             $otherUserId = $chat->participants[0]->user_id;
-
             $otherUser = User::where('id', $otherUserId)->first();
             $otherUser->sendNewMessageNotification([
                 'messageData' => [
@@ -101,7 +97,7 @@ class ChatMessageController extends Controller
                 ]
             ]);
         }
-
+        
     }
 
     public function getMessages(Request $request)
