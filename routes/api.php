@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\api\ChatMessageController;
+use App\Http\Controllers\api\NotificationsController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\DoctorController;
 use App\Http\Controllers\api\AppointmentController;
@@ -122,5 +123,11 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post('/doctors/appointments/request', [AppointmentController::class, 'appointmentsAction']);
     Route::get('/doctors/{id}/appointments/today', [AppointmentController::class, 'todayAppointments']);
     Route::get('/test/{id}', [AppointmentController::class, 'labtest']);
+
+    // Notifications
+    Route::get('/notifications', [NotificationsController::class, 'indexById']);
+
+    // Firebase Token
+    Route::post('/firebase/token/update', [UserController::class, 'updateFirebaseToken']);
 
 });

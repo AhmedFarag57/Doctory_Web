@@ -4,14 +4,15 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
     /**
-     * 
+     *
      * Get Users except yourself
-     * 
+     *
      * @return JsonRepsonse
      */
     public function index() : JsonResponse {
@@ -24,12 +25,25 @@ class UserController extends Controller
     public function blockUser($id)
     {
         $user = User::find($id);
-        
+
         $user->update([
             'blocked' => !$user->blocked
         ]);
 
         return redirect()->back();
+    }
+
+    public function updateFirebaseToken(Request $request)
+    {
+        $token = $request->firebaseToken;
+
+        $user = auth()->user();
+
+        $user->update([
+            'firebase_token' => $token,
+        ]);
+
+        return $this->success($user);
     }
 
 }
