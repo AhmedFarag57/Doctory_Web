@@ -38,6 +38,7 @@ class User extends Authenticatable
         'profile_picture',
         'isDoctor',
         'blocked',
+        'firebase_token',
     ];
 
     /**
@@ -97,5 +98,14 @@ class User extends Authenticatable
         //$this->notify(new MessageSent($data));
     }
 
+    /**
+     * Relation with Notification
+     *
+     * @return HasMany
+     */
+    public function notifications() : HasMany
+    {
+        return $this->hasMany(Notification::class, 'user_id');
+    }
 
 }

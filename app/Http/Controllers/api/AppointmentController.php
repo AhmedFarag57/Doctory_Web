@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\api;
 
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\Doctor;
 use App\Models\DoctorTime;
+use App\Models\Patient;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -49,6 +52,10 @@ class AppointmentController extends Controller
         $doctorTime->update([
            'reserved' => true,
         ]);
+
+        $doctor = Doctor::where('id', $appointment->doc_id)->first();
+
+        Helper::send_appointment_request_notification($appointment->id, $doctor->user->firebase_token);
 
         return $this->success($appointment, 'Appointment created successfully');
     }
@@ -205,6 +212,8 @@ class AppointmentController extends Controller
                 'status' => 'accepted'
             ]);
 
+            $patient = Patient::where('id', $appointment->patient_id)->first();
+
             $patient_user_id = DB::table('patients')
                 ->select('users.id')
                 ->join('users', 'users.id', '=', 'user_id')
@@ -218,14 +227,22 @@ class AppointmentController extends Controller
             $storeChat = new ChatController();
 
             $data = $storeChat->store($request);
+
+            Helper::send_appointment_notification($appointment->id, $patient->user->firebase_token);
+
+            return $this->success($appointment);
         }
         else{
             $appointment->update([
                 'status' => 'canceled'
             ]);
-        }
 
-        return $this->success($appointment);
+            $patient = Patient::where('id', $appointment->patient_id)->first();
+
+            Helper::send_appointment_notification($appointment->id, $patient->user->firebase_token);
+
+            return $this->success($appointment);
+        }
     }
 
     /**
@@ -292,14 +309,6 @@ class AppointmentController extends Controller
 
     public function labtest($id)
     {
-        $appointment = Appointment::find($id);
-
-        $patient_user_id = DB::table('patients')
-            ->select('users.id')
-            ->join('users', 'users.id', '=', 'user_id')
-            ->where('patients.id', '=', $appointment['patient_id'])
-            ->first();
-
-        return $this->success($patient_user_id->id);
+        // ..
     }
 }
