@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PointController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\AssignRoleController;
 use App\Http\Controllers\DoctorRequestedController;
@@ -99,6 +100,12 @@ Route::group(['middleware' => ['auth', 'role:Admin']], function(){
     Route::get('/appointments/{id}/edit', [AppointmentsController::class, 'edit'])->name('appointments.edit')->where('id', '[0-9]+');
     Route::put('/appointments/{id}/update', [AppointmentsController::class, 'update'])->name('appointments.update')->where('id', '[0-9]+');
     Route::delete('/appointments/{id}/destroy', [AppointmentsController::class, 'destroy'])->name('appointments.destroy')->where('id', '[0-9]+');
+
+    // Points
+    Route::get('/points', [PointController::class, 'index'])->name('points.request.index');
+    Route::get('/points/request/{id}', [PointController::class, 'show'])->name('points.request.show')->where('id', '[0-9]+');
+    Route::get('/points/request/{id}/accept', [PointController::class, 'acceptRequest'])->name('points.request.accept')->where('id', '[0-9]+');
+
 });
 
 // Routes for Doctor

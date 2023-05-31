@@ -18,6 +18,7 @@ class Doctor extends Model
         'phone',
         'rating',
         'accepted',
+        'wallet',
     ];
 
     /**
