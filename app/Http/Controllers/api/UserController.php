@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Events\VideoBlurEvent;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -44,6 +45,23 @@ class UserController extends Controller
         ]);
 
         return $this->success($user);
+    }
+
+    public function blurEvent(Request $request)
+    {
+        $this->validate($request, [
+            'video_id' => 'required',
+            'blurred' => 'required',
+        ]);
+
+        $videoId = $request->video_id;
+        $blurred = $request->blurred;
+        
+        $event = new VideoBlurEvent($videoId, $blurred);
+
+        broadcast($event)->toOthers();
+
+        return $this->success($event,'Send it successfully');
     }
 
 }

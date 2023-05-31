@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Broadcast;
 */
 
 Broadcast::channel('chat.{id}', function ($user, $id) {
-
+    /*
     $participant = \App\Models\ChatParticipant::where([
         [
             'user_id', $user->id,
@@ -25,4 +25,10 @@ Broadcast::channel('chat.{id}', function ($user, $id) {
     ])->first();
 
     return $participant !== null;
+    */
+    return true;
+});
+
+Broadcast::channel('video.{id}', function ($user, $id) {
+    return true;
 });

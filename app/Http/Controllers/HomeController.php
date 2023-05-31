@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -38,7 +39,9 @@ class HomeController extends Controller
 
             $patientsCount = Patient::count();
 
-            return view('home', compact('doctorsCount', 'patientsCount'));
+            $appointmentsCount = Appointment::count();
+
+            return view('home', compact('doctorsCount', 'patientsCount', 'appointmentsCount'));
         }
         else if($user->hasRole('Doctor'))
         {
@@ -53,7 +56,7 @@ class HomeController extends Controller
 
             return view('home', compact('wallet'));
         }
-        
+
         return view('errors.norole');
     }
 
@@ -101,7 +104,7 @@ class HomeController extends Controller
 
     /**
      * Show the User change password.
-     * 
+     *
      */
     public function changePassword()
     {
@@ -110,7 +113,7 @@ class HomeController extends Controller
 
     /**
      * Update the User password.
-     * 
+     *
      */
     public function updatePassword(Request $request)
     {

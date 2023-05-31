@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Comment\Doc;
 use function PHPUnit\Framework\isNull;
 
 class AppointmentController extends Controller
@@ -45,6 +46,22 @@ class AppointmentController extends Controller
             'time_to' => 'required',
             'date' => 'required'
         ]);
+
+        // check if the patient have enough point or not
+        $patient = Patient::where('id', $request->patient_id)->first();
+
+        $patient_wallet = floatval($patient->wallet);
+        $session_price = floatval($request->session_price);
+
+        if($patient_wallet >= $session_price){
+            $new_amount = $patient_wallet - $session_price;
+            $patient->update([
+                'wallet' => $new_amount,
+            ]);
+        }
+        else {
+            return $this->error('You don\'t have enough points to book an appointment.');
+        }
 
         $appointment = Appointment::create($request->all());
 
@@ -207,12 +224,12 @@ class AppointmentController extends Controller
 
         $appointment = Appointment::find($request->appointment_id);
 
+        $patient = Patient::where('id', $appointment->patient_id)->first();
+
         if($request->action){
             $appointment->update([
                 'status' => 'accepted'
             ]);
-
-            $patient = Patient::where('id', $appointment->patient_id)->first();
 
             $patient_user_id = DB::table('patients')
                 ->select('users.id')
@@ -228,6 +245,18 @@ class AppointmentController extends Controller
 
             $data = $storeChat->store($request);
 
+            // Add the point to Doctor
+            $doctor = Doctor::where('id', $appointment->doc_id)->first();
+
+            $doctor_wallet = floatval($doctor->wallet);
+            $session_price = floatval($appointment->session_price);
+
+            $new_amount = $doctor_wallet + $session_price;
+
+            $doctor->update([
+                'wallet' => $new_amount,
+            ]);
+
             Helper::send_appointment_notification($appointment->id, $patient->user->firebase_token);
 
             return $this->success($appointment);
@@ -237,7 +266,15 @@ class AppointmentController extends Controller
                 'status' => 'canceled'
             ]);
 
-            $patient = Patient::where('id', $appointment->patient_id)->first();
+            // return the point to Patient
+            $patient_wallet = floatval($patient->wallet);
+            $session_price = floatval($appointment->session_price);
+
+            $new_amount = $patient_wallet + $session_price;
+
+            $patient->update([
+                'wallet' => $new_amount,
+            ]);
 
             Helper::send_appointment_notification($appointment->id, $patient->user->firebase_token);
 

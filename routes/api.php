@@ -9,6 +9,7 @@ use App\Http\Controllers\api\DoctorController;
 use App\Http\Controllers\api\AppointmentController;
 use App\Http\Controllers\api\DoctorTimeController;
 use App\Http\Controllers\api\PatientController;
+use App\Http\Controllers\PointController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
@@ -129,5 +130,11 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
 
     // Firebase Token
     Route::post('/firebase/token/update', [UserController::class, 'updateFirebaseToken']);
+
+    // Points
+    Route::post('/points', [PointController::class, 'apiPointsRequest']);
+
+    // Video blur
+    Route::post('/blur', [UserController::class, 'blurEvent']);
 
 });

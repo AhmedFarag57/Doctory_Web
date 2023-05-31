@@ -29,7 +29,7 @@
             </div>
 
             @foreach ($appointments as $appointment)
-            
+
                 <div class="flex flex-wrap items-center text-gray-700 border-t-2 border-l-4 border-r-4 border-gray-300">
 
                     <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $appointment->doctor->user->name }}</div>
@@ -47,7 +47,7 @@
                         {{ $appointment->status }}
                     </div>
                     <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $appointment->date }}</div>
-                    <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $appointment->time }}</div>
+                    <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $appointment->time_from }} - {{ $appointment->time_to }}</div>
                     <div class="w-2/12 px-4 py-3 text-sm font-semibold text-gray-600 tracking-tight">{{ $appointment->session_price }} L.E</div>
                     <div class="w-1/12 flex items-center justify-end px-3">
                         <a class="px-2" href="{{ route('appointments.show', $appointment->id) }}">
@@ -86,8 +86,8 @@
             $( "#deletemodal" ).toggleClass( "hidden" );
             var url = $(this).attr('data-url');
             $(".remove-record").attr("action", url);
-        })        
-        
+        })
+
         $( "#deletemodelclose" ).on( "click", function(event) {
             event.preventDefault();
             $( "#deletemodal" ).toggleClass( "hidden" );

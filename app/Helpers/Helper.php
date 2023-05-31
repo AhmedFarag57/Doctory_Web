@@ -21,19 +21,43 @@ class Helper
 
             if($status == 'pending') {
                 $title = 'Appointment Recorded';
-                $description = "Appointment with \"{$appointmentId}\" Id has been recorded successfully";
+                $description = 'Your appointment with id '
+                    . $appointment->id
+                    . ' has been recorded successfully at '
+                    . $appointment->date
+                    . ' from '
+                    . $appointment->time_from
+                    . ' to '
+                    . $appointment->time_to
+                    . ' .';
             }
             else if($status == 'canceled') {
                 $title = 'Appointment Canceled';
-                $description = "Appointment with \"{$appointmentId}\" Id has been canceled successfully";
+                $description = 'Your appointment with id '
+                    . $appointment->id
+                    . ' at '
+                    . $appointment->date
+                    . ' from '
+                    . $appointment->time_from
+                    . ' to '
+                    . $appointment->time_to
+                    . ' has been canceled.';
             }
             else if($status == 'completed') {
                 $title = 'Appointment Completed';
-                $description = "Appointment with \"{$appointmentId}\" Id has been completed successfully";
+                $description = "Appointment has been completed successfully";
             }
             else if($status == 'accepted') {
                 $title = 'Appointment Accepted';
-                $description = "Appointment with \"{$appointmentId}\" Id has been accepted successfully";
+                $description = 'Your appointment with id '
+                    . $appointment->id
+                    . ' at '
+                    . $appointment->date
+                    . ' from '
+                    . $appointment->time_from
+                    . ' to '
+                    . $appointment->time_to
+                    . ' has been accepted.';
             }
 
             $data = [
@@ -67,7 +91,7 @@ class Helper
 
             $data = [
                 'title' => "Appointment Request",
-                'description' => "You have requested appointment at $appointment->data from $appointment->time_from to $appointment->time_to",
+                'description' => "You have requested appointment at " . $appointment->date . " from " . $appointment->time_from . " to " . $appointment->time_to . " .",
             ];
 
             // Send the notification
